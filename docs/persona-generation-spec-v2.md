@@ -3,7 +3,7 @@
 > 目标：把一个人、组织、角色或主题，蒸馏成可运行、可审计、可更新的 persona skill。  
 > 核心原则：先归档原始数据，再建立证据账本，再提炼认知模型，最后生成运行时 persona。不要从印象、搜索摘要或未落盘来源直接写 persona。
 
-本规范基于 `nuwa-skill`（女娲 · Skill造人术）的 persona 蒸馏方法论修改而来，保留其“多源调研 → 思维框架提炼 → 可运行 Skill 生成 → 质量验证”的主线，并进一步细化数据采集、来源过滤、证据账本、运行时 schema 和质量门槛。
+本规范基于 `nuwa-skill`（女娲 · Skill造人术）的 persona 蒸馏方法论修改而来，保留其“多源调研 → 思维框架提炼 → 可运行 Skill 生成 → 质量验证”的主线，并进一步细化数据采集、来源过滤、证据账本、运行时 schema 和迭代式全面采集规则。
 
 ## 0. 不可跳过的前置原则
 
@@ -14,9 +14,10 @@ persona 生成的第一步不是写 `SKILL.md`，也不是先填 `sources.jsonl`
 - **先归档，再分析**：搜索结果、网页片段、AI 摘要、浏览器临时读取内容只能用于发现线索，不能直接进入 `excerpts.jsonl`，也不能支撑 `SKILL.md`。
 - **证据必须可复查**：任何 `accepted` 或 `limited` 来源都必须有 `raw_path`，指向 `corpus/raw/` 下保存的原文、PDF、音视频转写、社交导出、决策材料或外部文章副本。
 - **有效载荷先于文件存在**：`raw_path` 存在不等于来源可用。必须确认本地文件包含可摘录的正文、转写、问答、决策记录或可解析数据；索引页、视频卡片页、播放器壳、跳转页、空 PDF、只有附件链接的 HTML、只有 metadata/广告/脚本的页面不得标记为 `accepted`。
-- **来源独立性先于数量**：同一作者、同一栏目、同一发布机制、同一年度系列或同一档节目连续多期，不能机械拆成几十个“独立来源”来满足数量门槛。必须同时统计 `raw_item_count` 和 `independent_source_count`，后者才用于最小来源量。
+- **来源独立性先于数量**：同一作者、同一栏目、同一发布机制、同一年度系列或同一档节目连续多期，不能机械拆成几十个“独立来源”来制造虚假覆盖。必须同时统计 `raw_item_count` 和 `independent_source_count`。
 - **原始数据优先于解释**：如果只能拿到二手转述，必须继续追溯原文；追溯失败时只能写入 `source-quality.md` 的未验证线索，不能支撑核心模型。
-- **质量和数量是门槛，不是建议**：低于最小来源量、摘录量或关键数据种类覆盖时，不得生成完整 persona；只能生成明确标注的 `draft`、`style guide` 或 `domain framework`。
+- **全面性先于达标停止**：不要因为达到某个数量线就停止采集。公开材料丰富的人物必须通过多轮“发现 → 过滤 → 采集 → 诊断 → 再发现”迭代，尽可能覆盖互联网上可取得、可审计、可追溯的材料。
+- **质量门槛只用于准入，不用于提前收工**：`valid` / `partial` / `shell` / `failed` 的判断决定材料能否进入证据链；数量和覆盖统计用于暴露缺口、决定交付状态，而不是作为“够了就不搜”的理由。
 - **不得偷工减料**：不能用少量高层总结、语录拼贴、搜索摘要或模型常识替代数据采集。公开材料丰富的人物必须按 A 档标准采集；材料不足不是降低标准的理由，而是降级交付状态的理由。
 - **research 必须像研究，不是摘要**：`research/*.md` 必须展示证据链、反证、分歧、缺口和推断过程。只有几段结论、只有来源列表、只有自动生成的笼统总结，都不得进入 persona 提炼阶段。
 
@@ -43,6 +44,74 @@ persona 生成的第一步不是写 `SKILL.md`，也不是先填 `sources.jsonl`
 - Step 4 才允许把通过 payload 验证的 raw 写入正式 `sources.jsonl`。
 - Step 5 才允许摘录。
 - Step 6 才允许写 research 和 evidence。
+
+## 0.0 Discovery-Acquisition Iteration Loop
+
+Step 1-3 不是一次性线性流程，而是一个必须重复执行的资料扩展循环：
+
+```text
+Iteration N
+→ Step 1: 按上一轮缺口搜索候选
+→ Step 2: 过滤、去重、canonical 追溯、写准入队列
+→ Step 3: 下载/导出 raw，并验证 payload
+→ Step 3.5: 诊断覆盖、失败、薄弱角度和污染来源
+→ Iteration N+1: 用诊断结果反向设计下一轮搜索
+```
+
+### 0.0.1 迭代目标
+
+每轮都必须回答：
+
+- 这一轮补什么缺口：时间段、媒介、source cluster、失败争议、外部视角、短表达、互动模式、领域背景或近期材料。
+- 哪些候选被拒绝，为什么拒绝。
+- 哪些 raw 真的有效，哪些只是 shell、blocked、paywall、metadata、播放器或附件索引。
+- 本轮之后还缺什么，下一轮搜索 query 应该如何改变。
+
+### 0.0.2 迭代次数
+
+- A 档公开材料丰富对象默认至少执行 5 轮 Step 1-3。
+- B 档默认至少执行 3 轮。
+- C 档默认至少执行 2 轮，除非用户提供的是封闭私有材料且互联网补源不适用。
+
+达到某个数量线不得作为提前停止理由。可以停止迭代的理由只有：
+
+- 连续两轮新增 `valid` / `partial` 独立来源簇极少，且 `source-quality.md` 说明已覆盖主要搜索空间。
+- 继续采集需要付费库、登录账号、人工转写、版权授权或用户提供材料。
+- 用户明确要求停止采集并进入 draft / partial persona。
+
+### 0.0.3 每轮交付物
+
+每轮必须追加或生成：
+
+- `discovery/iterations/iteration-N-plan.md`
+- `discovery/iterations/iteration-N-candidates.jsonl`
+- `discovery/iterations/iteration-N-acquisition-queue.jsonl`
+- `corpus/iteration-N-download-log.jsonl`
+- `corpus/iteration-N-raw-acquisition-report.md`
+
+主文件 `candidate-sources.jsonl`、`acquisition-queue.jsonl`、`rejected-candidates.jsonl` 和 `evidence/source-quality.md` 必须合并每轮结果，并保留去重和拒绝原因。
+
+### 0.0.4 Step 3.5 质量诊断
+
+每轮采集结束后，必须统计：
+
+- `raw_item_count`
+- `canonical_work_count`
+- `independent_source_count`
+- `valid` / `partial` / `shell` / `failed` 数量
+- 视频/音频 transcript 小时数
+- 官方字幕、人工字幕、自动字幕和人工转写的数量
+- 9 个 research 维度的有效 source cluster 覆盖
+- 失败/争议/外部视角材料占比
+- 早期/中期/近期覆盖
+- 被拦截、paywall、需要手工导出、需要 transcript/OCR 的材料
+- 无字幕、只有短 highlight、第三方剪辑、说话人不明的视频候选数量
+- 单一 source cluster 是否过度支配语料
+- PDF 解析状态：下载的 PDF 数、已生成 text/OCR 版本的数量、`pdftotext`/OCR 失败数量、只保存二进制但没有可读文本的数量
+- HTML 清洗状态：保存的 HTML 数、已生成 clean text 的数量、标签残留/导航模板/广告脚本污染数量、正文段落不足数量
+- 索引/播放器/附件页误判风险：按词数看似 `valid` 但清洗分段后只剩导航、表格、链接、播放器卡片或访问拦截文案的来源数量
+
+这些统计的用途是驱动下一轮搜索，而不是宣布“达标即可停止”。
 
 ## 0.1 Step 1：搜索和发现候选来源
 
@@ -75,6 +144,7 @@ Step 1 必须先建立 `search-plan.md`，至少包含以下矩阵：
 每轮搜索必须覆盖以下维度，不能只围绕最容易找到的一类材料：
 
 - **媒介多样性**：文本、音视频 transcript、社交/短表达、决策文件、外部报道、批评材料至少各搜索一轮。
+- **视频字幕专项**：公开材料丰富对象必须单独搜索 YouTube / Bilibili / 官方视频站的完整演讲、访谈、课堂、听证、股东会、AMA 或长 Q&A。视频候选不是网页正文候选，必须按字幕/转写来源处理。
 - **时间多样性**：早期、中期、近期各搜索一轮；活人必须单独搜索最近 12 个月。
 - **立场多样性**：本人自述、支持者、批评者、同行、受影响者各搜索一轮。
 - **场景多样性**：正式写作、即兴问答、压力/失败场景、商业决策场景、私人或半私人互动记录分别搜索。
@@ -96,23 +166,28 @@ Step 1 只输出 `discovery/candidate-sources.jsonl` 和 `discovery/search-plan.
   "expected_research_dimensions": ["long_conversations", "interaction_patterns"],
   "expected_source_cluster": "cluster_long_interviews",
   "expected_payload": "full_transcript",
+  "expected_parse_artifacts": ["raw_html", "clean_text"],
+  "payload_validation_plan": "clean HTML, remove navigation/templates, verify body paragraphs and transcript continuity",
   "canonicality_hypothesis": "official transcript linked from original publisher",
   "risk_flags": ["third_party_transcript"],
   "next_step": "trace_to_video_or_official_transcript"
 }
 ```
 
-### 0.1.5 Step 1 通过条件
+### 0.1.5 Step 1 轮次完成条件
 
-进入 Step 2 前必须满足：
+单轮 Step 1 进入 Step 2 前必须满足：
 
-- 9 个 research 维度中至少 7 个有候选来源；A 档必须 9 个都有候选。
-- A 档至少发现 80 个候选、B 档至少 35 个候选、C 档至少 15 个候选。
+- 本轮搜索目标和缺口必须写入 `iteration-N-plan.md` 或 `search-plan.md`。
+- 本轮候选必须标注对应的 research 维度和 source cluster。
+- 本轮必须包含至少 3 类不同搜索方向；A 档优先覆盖 5 类以上。
+- 活人或持续变化对象必须包含最近 12 个月搜索。
 - 候选来源至少覆盖 6 类 source cluster；不能超过 40% 候选来自同一来源簇。
 - 至少 20% 候选是反方、失败、争议或外部视角材料。
 - 每个候选都标注 `expected_payload`；无法预期有效载荷的候选只能保留为低优先级线索。
+- 每个候选都标注 `expected_parse_artifacts` 和 `payload_validation_plan`；HTML/PDF/视频候选必须在搜索阶段就预判后续如何清洗、抽取、OCR、下载字幕或识别 shell 风险。
 
-如果 Step 1 不达标，不得进入下载或写 persona；必须继续补搜索矩阵的缺口。
+这些不是“整个项目的质量门槛”，而是单轮发现是否足够结构化的检查。若不满足，必须先补本轮搜索矩阵，再进入 Step 2。
 
 ## 0.2 Step 2：过滤垃圾来源并追溯 canonical 原始来源
 
@@ -178,18 +253,21 @@ Step 2 输出 `discovery/acquisition-queue.jsonl`、`discovery/rejected-candidat
 }
 ```
 
-### 0.2.4 Step 2 通过条件
+### 0.2.4 Step 2 轮次完成条件
 
-进入 Step 3 前必须满足：
+单轮 Step 2 进入 Step 3 前必须满足：
 
-- `acquisition-queue.jsonl` 的独立来源簇数量达到目标的 120% 以上，给后续下载失败和 payload 失败留冗余。
 - 每个 queued source 都有 `source_cluster_id`、`canonical_work_id`、`counts_as_independent_source` 和 `expected_payload_status`。
-- 每个 research 维度至少有 2 个 queued source cluster；A 档至少 4 个。
-- 反方/失败/争议/外部视角材料在 queued sources 中不低于 20%，A 档目标 30%。
+- 每个 queued source 都有明确下载方法：`curl`、`dokobot read`、浏览器导出、手工导出、字幕下载、OCR 或付费库。
+- 每个 queued source 都有明确解析产物计划：HTML 必须说明是否生成 clean text；PDF 必须说明是否运行 `pdftotext`、OCR 或截图索引；视频必须说明字幕/转写产物。
+- 本轮新增 source cluster、重复 cluster、rejected cluster 都必须分别统计。
 - 所有 P4/P5 二手材料必须写明是否能追溯到 P1-P3；不能追溯的只允许进入外部视角或未验证线索。
 - 所有可能是页面壳的候选必须在 Step 2 标记为 `expected_payload_status=shell_risk`，Step 3 下载后必须优先验证。
+- 所有 PDF 候选必须在 Step 2 标记 `expected_parse_artifacts`，至少包含 `raw_pdf` 和 `text_extract`；如果预计是扫描件，必须标记 `ocr_required`。没有文本抽取计划的 PDF 只能排入 `discovery_only` 或低优先级队列。
+- 所有 HTML 候选必须在 Step 2 标记 `html_body_risk` 或 `clean_text_required`，并说明预期正文位置：文章正文、问答正文、transcript 区、公告正文、表格正文或附件链接。无法预期正文位置的 HTML 只能作为 `shell_risk`。
+- 视频候选必须写明上传者类型、视频完整性、字幕可得性和预计字幕来源。上传者类型包括 `official_channel`、`institution_channel`、`publisher_channel`、`conference_channel`、`third_party_archive`、`clip_channel`、`unknown`。
 
-如果 Step 2 发现候选高度集中在单一来源簇，必须回到 Step 1 重新搜索，而不是继续下载。
+如果 Step 2 发现候选高度集中在单一来源簇，本轮可以下载高价值来源，但 Step 3.5 必须把集中风险写成下一轮 Step 1 的搜索目标。
 
 ## 1. 设计目标
 
@@ -233,6 +311,7 @@ persona-name-perspective/
 │   └── raw/
 │       ├── writings/
 │       ├── transcripts/
+│       ├── audio/
 │       ├── social/
 │       ├── decisions/
 │       └── external/
@@ -292,7 +371,7 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
 |---|---|---|
 | `raw_item_count` | 本地保存的文件或记录数量，例如 48 封年度信、120 条微博、1 个视频页 | 说明归档规模 |
 | `canonical_work_count` | 可独立引用的作品、访谈、会议、书、文章、决策文件数量 | 判断材料覆盖 |
-| `independent_source_count` | 彼此独立的来源簇数量，按作者/场景/媒介/时间/动机去重后计算 | 判断是否达到最小来源量 |
+| `independent_source_count` | 彼此独立的来源簇数量，按作者/场景/媒介/时间/动机去重后计算 | 判断覆盖广度和最终交付状态 |
 
 示例：
 
@@ -313,7 +392,7 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
 }
 ```
 
-最小来源量中的“来源”默认指 `counts_as_independent_source=true` 的数量，而不是文件数。`raw_item_count` 可以帮助提高摘录量和时间覆盖，但不能替代多场景、多媒介、多动机的来源独立性。
+交付地板中的“来源”默认指 `counts_as_independent_source=true` 的数量，而不是文件数。`raw_item_count` 可以帮助提高摘录量和时间覆盖，但不能替代多场景、多媒介、多动机的来源独立性。
 
 ### 3.2 来源准入与垃圾过滤
 
@@ -379,6 +458,77 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
 - 用于外部视角、争议、传播影响，而不是证明本人真实信念
 - 明确标记为 `reported`、`external_view` 或 `low_confidence`
 
+#### 3.2.4.1 视频、音频和字幕来源
+
+公开视频是 persona 采集中必须单独处理的一等来源，尤其适用于演讲、长访谈、课堂问答、听证、年度会议、播客和直播回放。不得只保存 YouTube/Bilibili 落地页 HTML 后声称已采集音视频材料；真正可用的 raw payload 是字幕、官方 transcript、人工转写、音频文件或视频文件本身。
+
+Step 1 搜索必须包含视频字幕专项 query，例如：
+
+```text
+"{name}" YouTube full interview
+"{name}" lecture Q&A subtitles
+"{name}" annual meeting transcript video
+"{name}" testimony video captions
+site:youtube.com "{name}" "full interview"
+site:youtube.com "{name}" "Q&A"
+```
+
+Step 2 视频候选字段建议增加：
+
+```json
+{
+  "media_source_type": "youtube_video",
+  "uploader_type": "institution_channel",
+  "video_completeness": "full_event",
+  "estimated_duration_minutes": 87,
+  "subtitle_status_expected": "manual_or_auto_available",
+  "subtitle_language_expected": ["en"],
+  "transcript_download_method": "yt-dlp --write-subs --write-auto-subs --skip-download",
+  "video_risk_flags": ["third_party_upload", "speaker_diarization_needed"]
+}
+```
+
+视频候选准入规则：
+
+- 优先：本人/公司/学校/媒体/会议/政府机构官方频道发布的完整视频，或原始发布方提供的 transcript。
+- 可用但降权：可信第三方档案上传、自动字幕、无说话人分离但内容完整的视频。
+- 默认拒绝：短 highlight、剪辑号、反应视频、解说二创、无上下文片段、标题党成功学剪辑。
+- 如果只有视频页 HTML，没有字幕、transcript、音频或视频文件，不得标记为 `accepted` 或 `limited`，只能是 `discovery_only`。
+
+Step 3 视频采集优先顺序：
+
+```bash
+yt-dlp --write-subs --write-auto-subs --sub-langs "en.*,zh.*" --skip-download -o "corpus/raw/transcripts/src_video_%(id)s.%(ext)s" "<url>"
+```
+
+如果字幕不可用，但视频高度关键，可以下载音频并标记为 `needs_transcription`：
+
+```bash
+yt-dlp -f bestaudio --extract-audio --audio-format mp3 -o "corpus/raw/audio/src_video_%(id)s.%(ext)s" "<url>"
+```
+
+字幕 raw 文件必须保存 `.vtt`、`.srt` 或平台原始字幕格式；同时生成 normalized transcript `.txt`，但不得用 `.txt` 替代原始字幕文件。自动字幕必须在 `sources.jsonl` 标记：
+
+```json
+{
+  "payload_type": "auto_subtitle_transcript",
+  "transcript_kind": "auto_caption",
+  "subtitle_language": "en",
+  "duration_seconds": 5220,
+  "speaker_diarization": "unknown",
+  "transcript_confidence": "medium",
+  "payload_validation_notes": "Auto captions downloaded via yt-dlp; spot-check required before direct quotation."
+}
+```
+
+字幕 payload 验证：
+
+- A/B 档长访谈或演讲默认要求有效转写不少于 5 分钟或 500 词。
+- 自动字幕必须抽样检查至少 3 个时间点：开头、中段、结尾。
+- 多人对话如无法分辨说话人，仍可用于主题、互动和表达研究，但 direct quote 必须人工核对。
+- 第三方上传视频必须尽量追溯官方版本；追溯失败时只能 `limited`，并写明上传者和不确定性。
+- 视频时长、字幕词数、字幕类型、字幕语言、上传者类型必须进入 `source-quality.md` 或 `coverage-matrix.md` 统计。
+
 #### 3.2.5 原始文件有效载荷验证
 
 任何写入 `accepted` 或 `limited` 的来源，都必须先通过 raw payload 验证。验证结果写入 `sources.jsonl` 和 `evidence/source-quality.md`。
@@ -387,9 +537,9 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
 
 | 类型 | 可接受 payload | 不可接受 payload |
 |---|---|---|
-| HTML 文章/页面 | 正文、问答、完整转写、表格、公告原文、可定位段落 | 只有标题、摘要、播放器、视频卡片、广告、脚本、JSON 配置、附件链接 |
-| PDF | PDF 本身以及可读文本抽取；扫描件需 OCR 或截图索引 | 下载失败页、空白 PDF、只有封面/目录、PDF 链接页被误存为 PDF |
-| 音视频 | 原始音视频文件、官方 transcript、字幕或人工转写 | 只有视频落地页、只有 highlight 标题、无 transcript 的播放器页 |
+| HTML 文章/页面 | 正文、问答、完整转写、表格、公告原文、可定位段落；必须生成或保存 clean text，并通过正文段落抽样 | 只有标题、摘要、播放器、视频卡片、广告、脚本、JSON 配置、附件链接；清洗后只剩导航/模板/登录墙/访问拦截 |
+| PDF | PDF 本身以及可读文本抽取；扫描件需 OCR 或截图索引；必须保存 text/OCR 产物路径 | 下载失败页、空白 PDF、只有封面/目录、PDF 链接页被误存为 PDF；只保存二进制但没有可摘录文本 |
+| 音视频 | 原始音视频文件、官方 transcript、`.vtt`/`.srt` 字幕、自动字幕、人工转写；同时保留原视频 URL | 只有视频落地页、只有 highlight 标题、无 transcript 的播放器页 |
 | 社交媒体 | 可验证账号导出、完整帖文、时间戳、回复上下文 | 截图拼贴、二手整理、无上下文 quote |
 | 决策材料 | 公告、会议记录、合同摘要、公开信、监管文件、产品变更记录 | 新闻标题、短讯、没有原始文件的评论 |
 
@@ -401,6 +551,19 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
   "payload_type": "full_text",
   "payload_word_count": 8421,
   "payload_extractable": true,
+  "parse_artifacts": {
+    "raw_path": "corpus/raw/writings/src_0001.html",
+    "text_path": "corpus/raw/writings/src_0001.html.clean.txt",
+    "clean_text_generated": true,
+    "pdf_text_extracted": false,
+    "ocr_applied": false
+  },
+  "noise_checks": {
+    "html_tag_residue": false,
+    "navigation_or_template_dominant": false,
+    "table_or_number_dominant": false,
+    "access_block_detected": false
+  },
   "payload_validation_notes": "HTML contains the full body; converted to text for excerpting."
 }
 ```
@@ -415,9 +578,13 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
 硬性规则：
 
 - `payload_status` 为 `shell` 或 `failed` 的来源不得进入 `excerpts.jsonl`。
-- HTML 中正文可读词数少于 500，或 transcript 有效问答少于 5 分钟，默认不得作为 A/B 档有效来源；除非是高价值短声明、道歉、辞职信、判决、公告等决策材料，并在 `admission_reason` 解释。
+- HTML 中清洗后正文可读词数少于 500，或 transcript 有效问答少于 5 分钟，默认不得作为 A/B 档有效来源；除非是高价值短声明、道歉、辞职信、判决、公告等决策材料，并在 `admission_reason` 解释。
+- HTML 原始文件必须生成 clean text 或保存等价正文抽取结果；如果 clean text 中仍有大量 HTML 标签残留、导航链接、广告文案、模板页脚、播放器卡片、登录墙、访问拦截或脚本配置，`payload_status` 必须降为 `shell` / `failed`，不能只按词数标记 `valid`。
+- PDF 原始文件必须生成可摘录文本：`pdftotext`、OCR 或人工转写/截图索引三者之一。PDF 二进制存在但没有 text/OCR 产物时，不得进入 `accepted` / `limited`；只能标记 `shell`、`failed` 或 `needs_ocr`，并写入下一轮补救目标。
+- PDF 文本抽取后必须抽样检查：如果抽取结果主要是乱码、页眉页脚、目录、表格碎片、下载错误页或访问拦截文案，不能按文件大小或词数标记 `valid`。
 - 如果页面内真正有用的是 PDF、字幕、视频或附件，必须下载附件本身；保存外层 HTML 不算完成归档。
-- 自动抽取前必须抽样打开至少 3 个 raw 文件：早期、中期、近期各 1 个，确认文件内容不是模板、乱码或空壳。
+- 如果来源是 YouTube/Bilibili/播客/视频平台，必须优先保存字幕或音频转写；只有平台 HTML 的 `raw_path` 必须标记为 `shell` 或 `discovery_only`。
+- Step 3 每轮结束前必须抽样打开至少 6 个归档产物：早期、中期、近期各 1 个 raw；HTML clean text 至少 1 个；PDF text/OCR 至少 1 个；视频字幕/transcript 至少 1 个。确认内容不是模板、乱码、导航壳、表格碎片或空壳。
 
 #### 3.2.6 来源入库字段
 
@@ -436,6 +603,19 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
   "payload_word_count": 8230,
   "payload_extractable": true,
   "payload_validation_notes": "Full body archived locally and manually spot-checked.",
+  "parse_artifacts": {
+    "raw_path": "corpus/raw/writings/src_0001.html",
+    "text_path": "corpus/raw/writings/src_0001.html.clean.txt",
+    "clean_text_generated": true,
+    "pdf_text_extracted": false,
+    "ocr_applied": false
+  },
+  "noise_checks": {
+    "html_tag_residue": false,
+    "navigation_or_template_dominant": false,
+    "table_or_number_dominant": false,
+    "access_block_detected": false
+  },
   "canonical_source_id": null,
   "is_original": true,
   "is_derivative": false,
@@ -453,6 +633,9 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
 - `accepted` 和 `limited` 条目必须填写 `raw_path`，且文件必须存在于 `corpus/raw/`。
 - `raw_path` 应保存尽量接近 canonical 来源的原始内容，例如 `.html`、`.md`、`.txt`、`.pdf`、`.srt`、`.vtt`、`.json`、`.csv` 或转写文本。
 - `raw_path` 指向的文件必须通过 payload 验证；如果本地文件只是索引、播放器壳或附件列表，`admission_status` 只能是 `discovery_only` 或 `rejected`。
+- 如果来源是 HTML，`accepted` / `limited` 条目必须填写 `text_path` 或 `parse_artifacts.text_path`，指向 clean text；只把 `.html` 作为 `raw_path` 不够。
+- 如果来源是 PDF，`accepted` / `limited` 条目必须填写 `text_path` 或 `parse_artifacts.text_path`，指向 `pdftotext`/OCR/人工转写结果；只有 `.pdf` 没有可读文本不够。
+- `noise_checks` 中只要 `html_tag_residue`、`navigation_or_template_dominant`、`table_or_number_dominant`、`access_block_detected` 任一为 true，必须在 `payload_validation_notes` 解释为什么仍可用；无法解释则降为 `discovery_only` / `rejected`。
 - 只记录 URL 但没有本地归档的条目，`admission_status` 只能是 `discovery_only`，`allowed_uses` 只能包含 `discovery`。
 - 如果因版权、登录、技术限制不能完整保存原文，必须保存可审计的最小复查材料，例如标题、作者、日期、canonical URL、访问时间、摘录位置、截图或 transcript 片段，并在 `source-quality.md` 标明限制。
 
@@ -511,17 +694,19 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
 
 污染来源写入 `evidence/source-quality.md`，并说明丢弃原因。
 
-### 3.3 最小数据量
+### 3.3 全面采集目标和交付状态
 
-按照对象公开材料丰富度分三档。
+按照对象公开材料丰富度分三档。下表不是“达到即可停止”的门槛，而是判断最终交付状态的最低地板。采集阶段必须继续按 0.0 的多轮循环尽可能扩大资料覆盖。
 
-| 档位 | 适用对象 | 最小数据量 | 目标数据量 |
+| 档位 | 适用对象 | 完整 persona 交付地板 | 全面采集目标 |
 |---|---|---:|---:|
-| A 丰富公开材料 | 名公众人物、企业家、作者、创作者 | 50 个来源 / 1000 条摘录 | 150+ 来源 / 3000+ 摘录 |
-| B 中等公开材料 | 行业人物、小众创作者、公司高管 | 20 个来源 / 400 条摘录 | 60+ 来源 / 1000+ 摘录 |
-| C 私有人物/冷门对象 | 用户自己、同事、非公众人物 | 10 个来源 / 200 条摘录 | 30+ 来源 / 600+ 摘录 |
+| A 丰富公开材料 | 名公众人物、企业家、作者、创作者 | 50 个独立来源 / 1000 条摘录 | 尽可能接近互联网可得全集；通常 150+ 来源 / 3000+ 摘录 |
+| B 中等公开材料 | 行业人物、小众创作者、公司高管 | 20 个独立来源 / 400 条摘录 | 尽可能接近公开可得全集；通常 60+ 来源 / 1000+ 摘录 |
+| C 私有人物/冷门对象 | 用户自己、同事、非公众人物 | 10 个独立来源 / 200 条摘录 | 尽可能覆盖用户提供材料和少量公开材料；通常 30+ 来源 / 600+ 摘录 |
 
-这里的“来源”指 `independent_source_count`，不是 `raw_item_count`。年度信、同一节目多期、同一会议多段视频、同一书籍多格式、同一博客连续文章可以贡献大量摘录和时间覆盖，但必须先按 `source_cluster_id` 折算。折算后不足最小来源量时，不得生成完整 persona。
+这里的“来源”指 `independent_source_count`，不是 `raw_item_count`。年度信、同一节目多期、同一会议多段视频、同一书籍多格式、同一博客连续文章可以贡献大量摘录和时间覆盖，但必须先按 `source_cluster_id` 折算。
+
+如果低于完整 persona 交付地板，不得生成“完整 persona”，只能生成 `draft`、`style guide` 或 `domain framework`。如果已经高于交付地板，也不得因此停止采集；必须继续执行规定轮次，直到 0.0.2 的停止条件成立。
 
 推荐的独立来源簇配比：
 
@@ -533,7 +718,7 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
 
 媒介/场景种类包括：本人长文/书、长访谈 transcript、短表达/社交、公开演讲、真实决策材料、失败/争议材料、可信二手传记/深度报道、同行/批评者评价、互动问答、领域背景材料。
 
-低于最小数据量时，不得生成“完整 persona”。只能生成 `draft`，并在 `SKILL.md` 的诚实边界中明确标记。
+低于完整 persona 交付地板时，不得生成“完整 persona”。只能生成 `draft`，并在 `SKILL.md` 的诚实边界中明确标记。
 
 ### 3.4 数据种类配比
 
@@ -541,6 +726,7 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
 |---|---|---:|---:|
 | 系统性长文本 | 稳定思想框架 | 20 篇或 1 本书 | 5 篇或等价长文 |
 | 长对话/访谈 | 即兴推理、被追问反应 | 5 小时 transcript | 1 小时 transcript |
+| 视频/音频字幕 | 现场表达、停顿、被追问反应、非编辑语言 | 10 小时字幕/转写，含至少 5 个 source cluster | 2 小时字幕/转写 |
 | 短表达/社交 | 语言指纹、即时判断 | 300 条 | 50 条 |
 | 真实决策 | 言行一致性 | 10 个案例 | 3 个案例 |
 | 失败/争议/反转 | 防止英雄叙事 | 5 个案例 | 2 个案例 |
@@ -904,6 +1090,33 @@ Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users
 13. 来源摘要
 14. 更新记录
 
+### 7.0 第一人称运行时
+
+persona 的默认运行形态应该是直接、自然的第一人称，而不是反复声明“用某某的视角”。生成 `SKILL.md` 时必须明确：
+
+- 常规回答默认使用“我”来承载 persona 的判断、表达习惯和推理框架。
+- 不要在每个回答开头写“用 X 的视角看”“作为一个 X 风格的模型”“X-derived perspective”等元叙述。
+- 第一人称是运行时表达方式，不等于可以伪造身份、私人记忆、内部信息或未验证事实。
+- 当用户问及身份、当前事实、私人想法、高风险建议或要求伪造原话时，必须切换到诚实边界：说明这是 persona 生成的回答，不能冒充真实本人。
+- 对历史人物、公众人物或仍在世人物，允许 persona 用第一人称表达稳定原则和公开证据支持的判断；不得声称“我现在正在做某事”“我私下认为”“我持有/买入/卖出”这类需要当前或私人事实的内容。
+
+推荐运行时措辞：
+
+```text
+我会先看这是不是我能理解的生意。
+我不愿意为了一个看起来便宜的价格，买一个我无法判断长期经济性的东西。
+如果这件事会伤害声誉，我不会用短期利润为它辩护。
+```
+
+不推荐运行时措辞：
+
+```text
+用巴菲特视角来看……
+作为 Warren Buffett Perspective……
+巴菲特可能会说……
+我，Warren Buffett，现在认为……
+```
+
 ### 7.1 回答工作流
 
 每个 persona 必须有运行时 workflow：
@@ -926,15 +1139,16 @@ Step 6: 对高风险或事实性问题附上不确定性说明
 - 纯框架型：可直接回答，但仍需标注推断边界。
 - 角色互动型：按互动模式回应。
 - 高风险型：医疗、法律、金融、人身安全等必须降级，不得用 persona 权威包装建议。
-- 越界型：要求伪造本人观点、冒充本人、隐私推断时拒绝。
+- 越界型：要求伪造本人当前观点、私人信息、内部行动、真实身份冒充或隐私推断时拒绝。单纯要求 persona 用第一人称表达，不视为越界。
 
-## 8. 质量门槛
+## 8. 质量检查和交付状态
 
 ### 8.1 Corpus 质量
 
 | 检查项 | 通过标准 |
 |---|---|
-| 来源总量 | `independent_source_count` 达到对应档位最低要求；`raw_item_count` 不得替代 |
+| 迭代充分性 | 已完成对应档位默认迭代轮次，或符合 0.0.2 的停止条件 |
+| 来源总量 | `independent_source_count` 达到对应档位完整 persona 交付地板；`raw_item_count` 不得替代 |
 | 来源独立性 | 每个来源簇有 `source_cluster_id`；同一系列、同一会议、同一书籍、同一通稿已折算 |
 | 有效载荷 | `accepted` / `limited` 来源必须 `payload_status` 为 `valid` / `partial`，且可从 raw 中抽取正文 |
 | 空壳过滤 | 播放器页、索引页、附件链接页、metadata 页不得作为有效来源 |
@@ -947,6 +1161,8 @@ Step 6: 对高风险或事实性问题附上不确定性说明
 | 引用链 | 二手关键说法必须追溯到原始来源；追溯失败不得支撑心智模型 |
 | 去重 | 转载、语录站重复引用、通稿转载只算 1 个 canonical 来源 |
 | 摘录分布 | 单一来源簇摘录占比不超过对应档位上限 |
+
+质量检查失败不代表停止采集；它决定当前产物只能以 `draft`、`limited` 或 `incomplete` 状态交付，并且必须把下一轮补源方向写入 `source-quality.md`。
 
 ### 8.1.1 Research 质量
 

@@ -1,3 +1,11 @@
 .DS_Store
 __pycache__/
 *.py[cod]
+
+# Generated persona acquisition layers.
+*/discovery/
+*/corpus/*
+!*/corpus/sources.jsonl
+!*/corpus/excerpts.jsonl
+!*/corpus/excerpt-audit.md
+!*/corpus/coverage-matrix.md
