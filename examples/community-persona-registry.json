@@ -30,7 +30,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/will2025btc/buffett-perspective",
@@ -40,8 +41,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 9,
         "excluded_binary_files_count": 0,
-        "upstream_skill_name": "buffett-perspective"
-      }
+        "upstream_skill_name": "buffett-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "high",
+      "domains": [
+        "investing",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_changshu_anuo",
@@ -71,7 +79,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/Ricardo-Vv/changshu-anuo",
@@ -81,14 +90,20 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 7,
         "excluded_binary_files_count": 0,
-        "upstream_skill_name": "changshu-anuo"
-      }
+        "upstream_skill_name": "changshu-anuo",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_chenze",
       "handle": "chenze",
       "display_name": "陈泽.skill",
-      "enabled": true,
+      "enabled": false,
       "persona_ref": {
         "type": "local_agent_skill",
         "path": "community-personas/chenze-skill",
@@ -112,7 +127,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/fisher-yu-like/chenze-skill",
@@ -122,8 +138,14 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 18,
         "excluded_binary_files_count": 2,
-        "upstream_skill_name": "chenze-skill"
-      }
+        "upstream_skill_name": "chenze-skill",
+        "license_status": "license_missing",
+        "enabled_policy": "disabled_until_license_review"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_elon_musk",
@@ -153,7 +175,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/elon-musk-skill",
@@ -163,8 +186,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 8,
         "excluded_binary_files_count": 2,
-        "upstream_skill_name": "elon-musk-perspective"
-      }
+        "upstream_skill_name": "elon-musk-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "entrepreneurship",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_fengge_wangmingtianya_perspective",
@@ -194,7 +224,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/rottenpen/fengge-wangmingtianya-perspective",
@@ -204,8 +235,14 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 7,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "fengge-wangmingtianya-perspective"
-      }
+        "upstream_skill_name": "fengge-wangmingtianya-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_feynman",
@@ -235,7 +272,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/feynman-skill",
@@ -245,8 +283,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 10,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "feynman-perspective"
-      }
+        "upstream_skill_name": "feynman-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology",
+        "science"
+      ]
     },
     {
       "agent_id": "community_guodegangs",
@@ -276,7 +321,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/ByteRax/guodegang-skills",
@@ -286,8 +332,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 13,
         "excluded_binary_files_count": 0,
-        "upstream_skill_name": "guodegang-perspective"
-      }
+        "upstream_skill_name": "guodegang-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "arts",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_hu_chenfeng",
@@ -317,7 +370,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/Janlaywss/hu-chenfeng-skill",
@@ -330,8 +384,14 @@
         "upstream_skill_name": "huchenfeng-perspective",
         "excluded_generated_files": [
           "tools/vector_index.json"
-        ]
-      }
+        ],
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_ilya_sutskever",
@@ -361,7 +421,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/ilya-sutskever-skill",
@@ -371,14 +432,21 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 10,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "ilya-sutskever-perspective"
-      }
+        "upstream_skill_name": "ilya-sutskever-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology",
+        "science"
+      ]
     },
     {
       "agent_id": "community_justin_bieber",
       "handle": "justin_bieber",
       "display_name": "Justin Bieber Skill",
-      "enabled": true,
+      "enabled": false,
       "persona_ref": {
         "type": "local_agent_skill",
         "path": "community-personas/justin-bieber-skill",
@@ -402,7 +470,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/fisher-yu-like/justin-bieber-skill",
@@ -412,8 +481,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 8,
         "excluded_binary_files_count": 0,
-        "upstream_skill_name": "justin-bieber-perspective"
-      }
+        "upstream_skill_name": "justin-bieber-perspective",
+        "license_status": "license_missing",
+        "enabled_policy": "disabled_until_license_review"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "arts",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_karlmarx",
@@ -443,7 +519,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/baojiachen0214/karlmarx-skill",
@@ -453,8 +530,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 71,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "karlmarx-skill"
-      }
+        "upstream_skill_name": "karlmarx-skill",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "high",
+      "domains": [
+        "methodology",
+        "politics"
+      ]
     },
     {
       "agent_id": "community_karpathy",
@@ -484,7 +568,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/karpathy-skill",
@@ -494,8 +579,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 10,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "andrej-karpathy-perspective"
-      }
+        "upstream_skill_name": "andrej-karpathy-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "entrepreneurship",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_mao",
@@ -525,7 +617,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/wwwaapplleecu-source/mao-skill",
@@ -535,8 +628,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 194,
         "excluded_binary_files_count": 0,
-        "upstream_skill_name": "mao"
-      }
+        "upstream_skill_name": "mao",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "high",
+      "domains": [
+        "methodology",
+        "politics"
+      ]
     },
     {
       "agent_id": "community_maoxuan",
@@ -566,7 +666,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/leezythu/maoxuan-skill",
@@ -576,8 +677,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 9,
         "excluded_binary_files_count": 0,
-        "upstream_skill_name": "mao-zedong-perspective"
-      }
+        "upstream_skill_name": "mao-zedong-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "high",
+      "domains": [
+        "methodology",
+        "politics"
+      ]
     },
     {
       "agent_id": "community_mises_perspective",
@@ -607,7 +715,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/LijiayuDeng/mises-perspective",
@@ -617,8 +726,16 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 8,
         "excluded_binary_files_count": 2,
-        "upstream_skill_name": "mises-perspective"
-      }
+        "upstream_skill_name": "mises-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "high",
+      "domains": [
+        "investing",
+        "methodology",
+        "politics"
+      ]
     },
     {
       "agent_id": "community_mrbeast",
@@ -648,7 +765,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/mrbeast-skill",
@@ -658,8 +776,14 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 13,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "mrbeast-perspective"
-      }
+        "upstream_skill_name": "mrbeast-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_munger",
@@ -689,7 +813,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/munger-skill",
@@ -699,8 +824,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 8,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "munger-perspective"
-      }
+        "upstream_skill_name": "munger-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "high",
+      "domains": [
+        "investing",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_naval",
@@ -730,7 +862,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/naval-skill",
@@ -740,8 +873,14 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 8,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "naval-perspective"
-      }
+        "upstream_skill_name": "naval-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_paul_graham",
@@ -771,7 +910,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/paul-graham-skill",
@@ -781,14 +921,21 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 10,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "paul-graham-perspective"
-      }
+        "upstream_skill_name": "paul-graham-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "entrepreneurship",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_rob_pike",
       "handle": "rob_pike",
       "display_name": "罗布派克.skill",
-      "enabled": true,
+      "enabled": false,
       "persona_ref": {
         "type": "local_agent_skill",
         "path": "community-personas/rob-pike-skill",
@@ -812,7 +959,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/smallnest/rob-pike-skill",
@@ -822,14 +970,20 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 8,
         "excluded_binary_files_count": 0,
-        "upstream_skill_name": "rob-pike-skill"
-      }
+        "upstream_skill_name": "rob-pike-skill",
+        "license_status": "license_missing",
+        "enabled_policy": "disabled_until_license_review"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_star",
       "handle": "star",
       "display_name": "内娱.skill",
-      "enabled": true,
+      "enabled": false,
       "persona_ref": {
         "type": "local_agent_skill",
         "path": "community-personas/star-skill",
@@ -853,7 +1007,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/yanghaoraneve/star-skill",
@@ -863,8 +1018,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 15,
         "excluded_binary_files_count": 0,
-        "upstream_skill_name": "create-star-skill"
-      }
+        "upstream_skill_name": "create-star-skill",
+        "license_status": "license_missing",
+        "enabled_policy": "disabled_until_license_review"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "arts",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_steve_jobs",
@@ -894,7 +1056,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/steve-jobs-skill",
@@ -904,8 +1067,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 11,
         "excluded_binary_files_count": 2,
-        "upstream_skill_name": "steve-jobs-perspective"
-      }
+        "upstream_skill_name": "steve-jobs-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "entrepreneurship",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_taleb",
@@ -935,7 +1105,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/taleb-skill",
@@ -945,8 +1116,14 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 10,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "taleb-perspective"
-      }
+        "upstream_skill_name": "taleb-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_tong_jincheng",
@@ -976,7 +1153,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/hotcoffeeshake/tong-jincheng-skill",
@@ -986,8 +1164,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 9,
         "excluded_binary_files_count": 0,
-        "upstream_skill_name": "tong-jincheng-perspective"
-      }
+        "upstream_skill_name": "tong-jincheng-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "entrepreneurship",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_trump",
@@ -1017,7 +1202,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/trump-skill",
@@ -1027,14 +1213,21 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 10,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "trump-perspective"
-      }
+        "upstream_skill_name": "trump-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "high",
+      "domains": [
+        "methodology",
+        "politics"
+      ]
     },
     {
       "agent_id": "community_wang_er",
       "handle": "wang_er",
       "display_name": "王二.skill",
-      "enabled": true,
+      "enabled": false,
       "persona_ref": {
         "type": "local_agent_skill",
         "path": "community-personas/wang-er-skill",
@@ -1058,7 +1251,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/fisher-yu-like/wang-er-skill",
@@ -1068,8 +1262,14 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 12,
         "excluded_binary_files_count": 3,
-        "upstream_skill_name": "wang-er-skill"
-      }
+        "upstream_skill_name": "wang-er-skill",
+        "license_status": "license_missing",
+        "enabled_policy": "disabled_until_license_review"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_x_mentor",
@@ -1099,7 +1299,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/x-mentor-skill",
@@ -1109,8 +1310,14 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 15,
         "excluded_binary_files_count": 5,
-        "upstream_skill_name": "x-mastery-mentor"
-      }
+        "upstream_skill_name": "x-mastery-mentor",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_xinqingnian",
@@ -1140,7 +1347,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/SamadhiFire/xinqingnian-skill",
@@ -1150,8 +1358,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 55,
         "excluded_binary_files_count": 9,
-        "upstream_skill_name": "maozedong-maoxuan-skill"
-      }
+        "upstream_skill_name": "maozedong-maoxuan-skill",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "high",
+      "domains": [
+        "methodology",
+        "politics"
+      ]
     },
     {
       "agent_id": "community_zhang_yiming",
@@ -1181,7 +1396,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/zhang-yiming-skill",
@@ -1191,8 +1407,15 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 10,
         "excluded_binary_files_count": 1,
-        "upstream_skill_name": "zhang-yiming-perspective"
-      }
+        "upstream_skill_name": "zhang-yiming-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "entrepreneurship",
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_zhangxuefeng",
@@ -1222,7 +1445,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/alchaincyf/zhangxuefeng-skill",
@@ -1232,8 +1456,14 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 10,
         "excluded_binary_files_count": 2,
-        "upstream_skill_name": "zhangxuefeng-perspective"
-      }
+        "upstream_skill_name": "zhangxuefeng-perspective",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     },
     {
       "agent_id": "community_zizek",
@@ -1263,7 +1493,8 @@
       "runtime_boundaries": [
         "Third-party imported community Agent Skill; verify source quality before relying on factual claims.",
         "Use persona voice only as a reasoning perspective, not as a real identity claim.",
-        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status."
+        "Verify current facts before relying on recent events, market data, legal facts, medical facts, or live public-figure status.",
+        "For political, medical, legal, financial, or safety-sensitive topics, provide only general non-authoritative analysis unless verified by reliable sources."
       ],
       "metadata": {
         "source_repository": "https://github.com/JikunR/zizek-skill",
@@ -1273,8 +1504,14 @@
         "imported_on": "2026-05-11",
         "imported_files_count": 9,
         "excluded_binary_files_count": 0,
-        "upstream_skill_name": "zizek"
-      }
+        "upstream_skill_name": "zizek",
+        "license_status": "license_present",
+        "enabled_policy": "enabled_with_source_and_license_metadata"
+      },
+      "risk_level": "medium",
+      "domains": [
+        "methodology"
+      ]
     }
   ]
 }

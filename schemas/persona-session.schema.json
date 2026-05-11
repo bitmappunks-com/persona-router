@@ -27,6 +27,10 @@
       "type": "string",
       "maxLength": 4000
     },
+    "last_user_input": {
+      "type": "string",
+      "maxLength": 4000
+    },
     "available_agent_ids": {
       "type": "array",
       "items": {
@@ -45,6 +49,10 @@
       "type": "string",
       "enum": ["replace_for_topic", "add_for_topic", "single_turn_only"]
     },
+    "active_policy": {
+      "type": "string",
+      "enum": ["explicit_active_first", "mentions_replace_for_topic", "mentions_add_for_topic", "single_turn_mentions"]
+    },
     "round_index": {
       "type": "integer",
       "minimum": 0
@@ -53,6 +61,13 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/turn"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
       }
     }
   },

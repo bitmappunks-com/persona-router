@@ -1,0 +1,3 @@
+{"case_id":"mentions_start_topic","input":"@feynman @steve_jobs 讨论一下产品发布会为什么容易变成形式主义","expected_intent":"topic_with_mentions","expected_active":["community_feynman","community_steve_jobs"],"expected_round_agents":["community_feynman","community_steve_jobs"],"expected_runtime_entrypoint":"SKILL.md","expected_source_repository":"https://github.com/alchaincyf/feynman-skill","check_max_words":true}
+{"case_id":"next_round_keeps_active","input":"再讨论一轮","expected_intent":"next_round","expected_round_triggers":["active","active"],"expected_previous_turns_min":2,"check_max_words":true}
+{"case_id":"deactivate_agent","input":"deactivate @steve_jobs","expected_intent":"deactivate","expected_active_after":["community_feynman"]}

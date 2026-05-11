@@ -54,6 +54,23 @@
           "type": "boolean",
           "default": true
         },
+        "source": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "default": "medium"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
         "persona_ref": {
           "$ref": "#/$defs/persona_ref"
         },
