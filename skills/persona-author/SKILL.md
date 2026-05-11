@@ -57,7 +57,7 @@ Generated artifacts that must stay out of git: `corpus/raw/`, `discovery/`, `cor
 5. **Excerpts** (Step 5): pull quotable passages into `corpus/excerpts.jsonl` with `excerpt_id`, `source_id`, `raw_path`, `verbatim`.
 6. **Research** (Step 6): per-angle markdown in `research/` showing evidence chain, counterevidence, gaps. No bullet-list summaries without citations.
 7. **Distill** (Step 7): write `evidence/mental-models.jsonl`, `heuristics.jsonl`, `contradictions.md`, then `persona.json`, then `SKILL.md`.
-8. **Validate** (Step 8): run `python3 scripts/quality_check.py local-personas/<persona>/SKILL.md`, then write `tests/` and `evals.md`.
+8. **Validate** (Step 8): run `python3 skills/persona-author/scripts/quality_check.py local-personas/<persona>/SKILL.md`, then write `tests/` and `evals.md`.
 
 ## Reference
 
