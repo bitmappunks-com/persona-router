@@ -84,7 +84,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["local_persona_package", "inline_prompt", "remote_persona"]
+          "enum": ["local_persona_package", "local_agent_skill", "inline_prompt", "remote_persona"]
         },
         "path": {
           "type": "string",
@@ -107,6 +107,18 @@
         }
       },
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "local_agent_skill"
+              }
+            }
+          },
+          "then": {
+            "required": ["path", "entrypoint"]
+          }
+        },
         {
           "if": {
             "properties": {

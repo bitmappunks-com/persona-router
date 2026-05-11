@@ -42,7 +42,7 @@ persona 不直接等同会话成员。一个 persona 可以被包装成一个或
 - `agent_id`: 稳定机器 ID。
 - `handle`: 用户可输入的 @ 名称。
 - `display_name`: UI 显示名。
-- `persona_ref`: 指向 persona 包或 prompt 定义。
+- `persona_ref`: 指向 persona 包、Agent Skill 包或 prompt 定义。
 - `activation`: 这个 agent 如何被激活、停用、默认是否参与。
 - `dialogue`: 多 agent 讨论时的职责和发言策略。
 - `runtime_boundaries`: 会话级限制，不能覆盖 persona 自身安全边界。
@@ -97,6 +97,20 @@ persona 不直接等同会话成员。一个 persona 可以被包装成一个或
   ]
 }
 ```
+
+如果迁移的是标准 Agent Skill，且只有 `SKILL.md` 入口、没有本仓库完整 `persona.json` 运行包，则使用：
+
+```json
+{
+  "persona_ref": {
+    "type": "local_agent_skill",
+    "path": "community-personas/feynman-skill",
+    "entrypoint": "SKILL.md"
+  }
+}
+```
+
+`local_agent_skill` 可参与 active agent 调度，但应在 `metadata` 或 `SOURCE.md` 中记录上游来源，并通过 `runtime_boundaries` 标明第三方来源和事实查证边界。
 
 ## Active 控制
 
