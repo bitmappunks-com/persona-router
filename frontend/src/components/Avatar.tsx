@@ -7,24 +7,15 @@ interface Props {
   size?: Size;
 }
 
-function glyph(agent: Agent): string {
-  const source = (agent.display_name || agent.handle || "?").trim();
-  if (!source) return "?";
-  const first = source[0];
-  return /[a-z]/i.test(first) ? first.toUpperCase() : first;
-}
-
-function tone(agent: Agent): "low" | "medium" | "high" {
-  const r = (agent.risk_level || "medium").toLowerCase();
-  if (r === "low") return "low";
-  if (r === "high") return "high";
-  return "medium";
+export function avatarUrl(seed: string): string {
+  return `https://bmp.blockinsight.top/?t=${encodeURIComponent(seed)}`;
 }
 
 export function Avatar({ agent, size = "md" }: Props) {
+  const seed = agent.handle || agent.agent_id || "unknown";
   return (
-    <span className={`avatar size-${size} tone-${tone(agent)}`} aria-hidden="true">
-      {glyph(agent)}
+    <span className={`avatar size-${size}`} aria-hidden="true">
+      <img src={avatarUrl(seed)} alt="" loading="lazy" />
     </span>
   );
 }

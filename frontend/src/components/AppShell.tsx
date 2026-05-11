@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { avatarUrl } from "./Avatar";
 import { useAppState } from "../state";
 
 export function AppShell() {
@@ -8,7 +9,9 @@ export function AppShell() {
     <div className="app">
       <header className="appbar">
         <NavLink to="/" className="brand">
-          <span className="brand-mark">P</span>
+          <span className="brand-mark">
+            <img src={avatarUrl("persona_router")} alt="" />
+          </span>
           <span className="brand-name">Persona Router</span>
         </NavLink>
         <nav className="nav">

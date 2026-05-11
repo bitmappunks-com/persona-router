@@ -211,14 +211,18 @@ dd {
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: var(--ink);
-  display: grid;
-  place-items: center;
-  color: var(--clay);
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: -0.02em;
+  background: var(--bg-2);
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
 }
 
 .brand-name {
@@ -520,27 +524,28 @@ dd {
 /* ─── avatar / monogram ─────────────────────────────────── */
 
 .avatar {
-  display: grid;
-  place-items: center;
+  display: block;
   flex-shrink: 0;
   border-radius: 12px;
-  font-family: var(--serif);
-  font-weight: 600;
-  letter-spacing: -0.02em;
   background: var(--bg-2);
-  color: var(--ink);
-  border: 1px solid var(--rule);
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--rule);
+  position: relative;
 }
 
-.avatar.size-xs { width: 26px; height: 26px; font-size: 12px; border-radius: 7px; }
-.avatar.size-sm { width: 36px; height: 36px; font-size: 16px; border-radius: 10px; }
-.avatar.size-md { width: 48px; height: 48px; font-size: 20px; }
-.avatar.size-lg { width: 72px; height: 72px; font-size: 30px; border-radius: 16px; }
-.avatar.size-xl { width: 112px; height: 112px; font-size: 46px; border-radius: 22px; }
+.avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
 
-.avatar.tone-medium { background: var(--clay-soft); color: var(--clay-deep); border-color: rgba(199, 92, 42, 0.25); }
-.avatar.tone-high { background: var(--clay); color: var(--surface); border-color: var(--clay); }
-.avatar.tone-low { background: rgba(122, 122, 63, 0.12); color: var(--olive); border-color: rgba(122, 122, 63, 0.3); }
+.avatar.size-xs { width: 26px; height: 26px; border-radius: 7px; }
+.avatar.size-sm { width: 36px; height: 36px; border-radius: 10px; }
+.avatar.size-md { width: 48px; height: 48px; }
+.avatar.size-lg { width: 72px; height: 72px; border-radius: 16px; }
+.avatar.size-xl { width: 112px; height: 112px; border-radius: 22px; }
 
 /* ─── directory page ────────────────────────────────────── */
 
