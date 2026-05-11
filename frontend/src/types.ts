@@ -6,7 +6,9 @@ export interface Agent {
   risk_level?: string;
   source?: Record<string, string | undefined>;
   runtime_boundaries?: string[];
+  stance?: string;
   dialogue?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface SessionData {

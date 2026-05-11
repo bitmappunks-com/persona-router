@@ -26,6 +26,8 @@ export const api = {
   listAgents: () => request<Agent[]>("/agents"),
   createSession: () =>
     request<{ session: SessionData }>("/sessions", { method: "POST" }),
+  getSession: (sessionId: string) =>
+    request<SessionData>(`/sessions/${sessionId}`),
   setActive: (sessionId: string, handles: string[]) =>
     request<SessionData>(`/sessions/${sessionId}/active`, {
       method: "POST",

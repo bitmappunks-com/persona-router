@@ -82,6 +82,8 @@ class Agent:
             "persona_ref": self.persona_ref,
             "dialogue": self.dialogue,
             "metadata": self.metadata,
+            "runtime_boundaries": list(self.data.get("runtime_boundaries", [])),
+            "stance": self.dialogue.get("stance", "") if isinstance(self.dialogue, dict) else "",
         }
 
 

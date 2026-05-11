@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from typing import Any
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -43,6 +44,8 @@ def create_app(
     llm_config: LLMConfig | None = None,
 ) -> FastAPI:
     repo_root = Path(root).resolve()
+    # Load .env from the repo root before reading any LLM env vars
+    load_dotenv(repo_root / ".env", override=False)
     session_store = store or JsonFileSessionStore(repo_root)
 
     # `...` sentinel = auto-detect from environment. None = force mock. Else use provided client.
@@ -151,6 +154,15 @@ def create_app(
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         except LLMConfigurationError as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    @app.get("/{spa_path:path}", include_in_schema=False)
+    def spa_fallback(spa_path: str) -> FileResponse:
+        if spa_path.startswith(("static/", "agents", "sessions", "health")):
+            raise HTTPException(status_code=404, detail="Not found")
+        index_path = web_dir / "index.html"
+        if not index_path.exists():
+            raise HTTPException(status_code=404, detail="Web UI is not packaged")
+        return FileResponse(index_path)
 
     return app
 

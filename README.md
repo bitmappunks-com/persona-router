@@ -20,31 +20,27 @@ deactivate @steve_jobs
 
 ## Quick Start
 
-### Real LLM mode (OpenAI-compatible: DeepSeek / OpenAI / any compatible endpoint)
+### Configure the LLM provider
+
+The server reads credentials from `.env` at the repo root on startup. Copy the template and fill it in:
 
 ```bash
+cp .env.example .env
+# edit .env and set DEEPSEEK_API_KEY=... (or OPENAI_API_KEY=...)
 pip install -e '.[llm]'
-
-# DeepSeek (default base_url + model when DEEPSEEK_API_KEY is set)
-export DEEPSEEK_API_KEY=sk-...
-# optional overrides
-export PERSONA_ROUTER_MODEL=deepseek-chat        # or deepseek-reasoner
-export PERSONA_ROUTER_TEMPERATURE=0.4
-
-make web
 ```
 
-Or use OpenAI / a custom OpenAI-compatible endpoint:
+Supported providers (OpenAI-compatible):
 
-```bash
-export OPENAI_API_KEY=sk-...
-# or fully custom:
-export PERSONA_ROUTER_API_KEY=...
-export PERSONA_ROUTER_BASE_URL=https://your-endpoint/v1
-export PERSONA_ROUTER_MODEL=gpt-4o-mini
-```
+| Variable                | Default                         |
+| ----------------------- | ------------------------------- |
+| `DEEPSEEK_API_KEY`      | DeepSeek (`api.deepseek.com/v1`) |
+| `OPENAI_API_KEY`        | OpenAI (`api.openai.com/v1`)    |
+| `PERSONA_ROUTER_API_KEY` + `PERSONA_ROUTER_BASE_URL` | custom OpenAI-compatible endpoint |
+| `PERSONA_ROUTER_MODEL`  | `deepseek-chat` / `gpt-4o-mini` |
+| `PERSONA_ROUTER_TEMPERATURE` | `0.4`                      |
 
-Without any API key the server falls back to a deterministic mock executor — useful for UI development. The current mode is reported at `GET /health`.
+Without any key the server falls back to a deterministic mock executor — useful for UI work. The current mode is reported at `GET /health`.
 
 ### Frontend (React + Vite)
 
