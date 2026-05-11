@@ -25,6 +25,13 @@ def test_api_session_round_next_flow(tmp_path: Path) -> None:
     root = make_api_root(tmp_path)
     client = TestClient(create_app(root))
 
+    page = client.get("/")
+    assert page.status_code == 200
+    assert "Persona Router" in page.text
+    asset = client.get("/static/app.js")
+    assert asset.status_code == 200
+    assert "runRound" in asset.text
+
     agents = client.get("/agents")
     assert agents.status_code == 200
     assert any(agent["handle"] == "feynman" for agent in agents.json())
@@ -45,4 +52,3 @@ def test_api_session_round_next_flow(tmp_path: Path) -> None:
     assert second.status_code == 200
     assert second.json()["round"]["round_index"] == 2
     assert [turn["trigger"] for turn in second.json()["round"]["turns"]] == ["active", "active"]
-

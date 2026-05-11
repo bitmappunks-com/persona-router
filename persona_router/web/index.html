@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Persona Router</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="left-rail" aria-label="Agent control panel">
+        <div class="brand">
+          <div class="mark" aria-hidden="true">PR</div>
+          <div>
+            <h1>Persona Router</h1>
+            <p id="sessionLabel">creating session</p>
+          </div>
+        </div>
+
+        <label class="search-box">
+          <span>Find agent</span>
+          <input id="agentSearch" type="search" placeholder="@feynman, jobs, investing" autocomplete="off" />
+        </label>
+
+        <div class="panel-head">
+          <h2>Agents</h2>
+          <span id="agentCount">0</span>
+        </div>
+        <div id="agentList" class="agent-list" aria-live="polite"></div>
+      </section>
+
+      <section class="workspace" aria-label="Conversation workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Active discussion</p>
+            <h2 id="topicTitle">Choose agents, then start a topic</h2>
+          </div>
+          <button id="nextRoundButton" class="icon-button" title="Next round" aria-label="Next round" disabled>↻</button>
+        </header>
+
+        <section class="active-strip" aria-label="Active agents">
+          <div>
+            <span class="strip-label">Active</span>
+            <div id="activeChips" class="chips"></div>
+          </div>
+          <button id="clearActiveButton" class="secondary-button" disabled>Clear</button>
+        </section>
+
+        <section id="transcript" class="transcript" aria-live="polite">
+          <div class="empty-state">
+            <div class="empty-grid" aria-hidden="true"></div>
+            <h3>Start with mentions or active agents.</h3>
+            <p>Pick two or more people on the left, write a subject, then run a round.</p>
+          </div>
+        </section>
+
+        <form id="composer" class="composer">
+          <textarea
+            id="topicInput"
+            rows="3"
+            placeholder="@feynman @steve_jobs 讨论一下产品发布会为什么容易变成形式主义"
+          ></textarea>
+          <div class="composer-actions">
+            <div id="statusLine" class="status-line">Ready</div>
+            <button id="sendButton" class="primary-button" type="submit">Run round</button>
+          </div>
+        </form>
+      </section>
+
+      <aside class="inspector" aria-label="Source inspector">
+        <div class="panel-head">
+          <h2>Source</h2>
+          <span id="sourceRisk">none</span>
+        </div>
+        <div id="sourceInspector" class="source-card">
+          <p>Select an agent to inspect source, license, risk, and boundaries.</p>
+        </div>
+      </aside>
+    </main>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

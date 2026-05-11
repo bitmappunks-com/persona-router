@@ -20,6 +20,18 @@ deactivate @steve_jobs
 
 ## Quick Start
 
+Run the web UI:
+
+```bash
+make web
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8000/
+```
+
 Validate registries and imported community skills:
 
 ```bash
@@ -48,10 +60,10 @@ python3 -m persona_router.cli --json next <session_id>
 Run the API server:
 
 ```bash
-uvicorn persona_router.api:app --reload
+python3 -m uvicorn persona_router.api:app --reload --host 127.0.0.1 --port 8000
 ```
 
-The current executor is intentionally a deterministic mock executor. It proves registry loading, active-agent state, turn planning, runtime loading, and transcript persistence before real LLM execution is connected.
+The web UI lets you select active agents, inspect source/license/risk metadata, run a topic round, continue the next round, and deactivate agents. The default executor is still deterministic mock execution; it proves registry loading, active-agent state, turn planning, runtime loading, and transcript persistence before a real LLM provider is plugged in.
 
 ## Key Paths
 

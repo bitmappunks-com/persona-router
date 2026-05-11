@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from .commands import parse_input
@@ -26,9 +28,19 @@ def create_app(root: Path | str = ".", store: SessionStore | None = None) -> Fas
     repo_root = Path(root).resolve()
     session_store = store or JsonFileSessionStore(repo_root)
     app = FastAPI(title="Persona Router", version="0.1.0")
+    web_dir = Path(__file__).resolve().parent / "web"
+    if web_dir.exists():
+        app.mount("/static", StaticFiles(directory=web_dir), name="static")
 
     def registry():
         return load_registry(default_registry_paths(repo_root), root=repo_root)
+
+    @app.get("/", include_in_schema=False)
+    def index() -> FileResponse:
+        index_path = web_dir / "index.html"
+        if not index_path.exists():
+            raise HTTPException(status_code=404, detail="Web UI is not packaged")
+        return FileResponse(index_path)
 
     @app.get("/agents")
     def list_agents() -> list[dict[str, Any]]:
