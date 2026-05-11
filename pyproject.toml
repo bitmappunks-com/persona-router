@@ -9,6 +9,9 @@ dependencies = [
   "uvicorn>=0.23.0"
 ]
 
+[project.optional-dependencies]
+llm = ["openai>=1.30.0"]
+
 [project.scripts]
 persona-router = "persona_router.cli:main"
 

@@ -2,6 +2,18 @@
 __pycache__/
 *.py[cod]
 
+# Runtime session state
+.persona-router/
+
+# Frontend toolchain
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Environment
+.env
+.env.local
+
 # Generated persona acquisition layers.
 */discovery/
 */corpus/*

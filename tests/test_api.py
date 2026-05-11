@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import shutil
 from pathlib import Path
 
@@ -23,14 +24,19 @@ def make_api_root(tmp_path: Path) -> Path:
 
 def test_api_session_round_next_flow(tmp_path: Path) -> None:
     root = make_api_root(tmp_path)
-    client = TestClient(create_app(root))
+    client = TestClient(create_app(root, llm_client=None))
 
     page = client.get("/")
     assert page.status_code == 200
     assert "Persona Router" in page.text
-    asset = client.get("/static/app.js")
+    match = re.search(r"/static/assets/[^\"' >]+\.js", page.text)
+    assert match, "expected built JS bundle reference in index.html"
+    asset = client.get(match.group(0))
     assert asset.status_code == 200
-    assert "runRound" in asset.text
+
+    health = client.get("/health")
+    assert health.status_code == 200
+    assert health.json()["status"] == "ok"
 
     agents = client.get("/agents")
     assert agents.status_code == 200

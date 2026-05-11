@@ -131,7 +131,6 @@ def run_llm_round(
             model=config.model,
             temperature=config.temperature,
         )
-        content = apply_boundary_note(content, boundary.needs_verification, boundary.should_downgrade)
         content = limit_words(content, int(agent.dialogue.get("max_words_per_turn", 260)))
         metadata = {
             "mock": False,

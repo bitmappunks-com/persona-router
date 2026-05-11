@@ -20,16 +20,53 @@ deactivate @steve_jobs
 
 ## Quick Start
 
-Run the web UI:
+### Real LLM mode (OpenAI-compatible: DeepSeek / OpenAI / any compatible endpoint)
 
 ```bash
+pip install -e '.[llm]'
+
+# DeepSeek (default base_url + model when DEEPSEEK_API_KEY is set)
+export DEEPSEEK_API_KEY=sk-...
+# optional overrides
+export PERSONA_ROUTER_MODEL=deepseek-chat        # or deepseek-reasoner
+export PERSONA_ROUTER_TEMPERATURE=0.4
+
 make web
 ```
 
-Then open:
+Or use OpenAI / a custom OpenAI-compatible endpoint:
 
-```text
-http://127.0.0.1:8000/
+```bash
+export OPENAI_API_KEY=sk-...
+# or fully custom:
+export PERSONA_ROUTER_API_KEY=...
+export PERSONA_ROUTER_BASE_URL=https://your-endpoint/v1
+export PERSONA_ROUTER_MODEL=gpt-4o-mini
+```
+
+Without any API key the server falls back to a deterministic mock executor — useful for UI development. The current mode is reported at `GET /health`.
+
+### Frontend (React + Vite)
+
+The bundled frontend lives in `frontend/` (source) and is built into `persona_router/web/` (served by FastAPI under `/static`).
+
+```bash
+make web-install   # one-time: install npm deps
+make web-build     # produce production bundle into persona_router/web/
+make web           # start FastAPI on :8000 — open http://127.0.0.1:8000/
+```
+
+For hot-reload frontend development, run both:
+
+```bash
+make web           # terminal 1: FastAPI on :8000
+make web-dev       # terminal 2: Vite on :5173 (proxies API to :8000)
+```
+
+Check the active runtime mode at any time:
+
+```bash
+curl http://127.0.0.1:8000/health
 ```
 
 Validate registries and imported community skills:

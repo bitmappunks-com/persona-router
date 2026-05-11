@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any
 
@@ -9,7 +10,8 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from .commands import parse_input
-from .executor import run_mock_round
+from .executor import LLMClient, LLMConfig, run_llm_round, run_mock_round
+from .llm import LLMConfigurationError, build_default_client, diagnose_llm_environment
 from .planner import build_turn_plan
 from .registry import RegistryError, default_registry_paths, load_registry
 from .session import RouterSession, SessionError
@@ -24,9 +26,36 @@ class RoundRequest(BaseModel):
     text: str
 
 
-def create_app(root: Path | str = ".", store: SessionStore | None = None) -> FastAPI:
+def _executor_for(client: LLMClient | None, config: LLMConfig):
+    if client is None:
+        return None
+
+    def runner(session, registry, plan):
+        return run_llm_round(session, registry, plan, client, config)
+
+    return runner
+
+
+def create_app(
+    root: Path | str = ".",
+    store: SessionStore | None = None,
+    llm_client: LLMClient | None | object = ...,
+    llm_config: LLMConfig | None = None,
+) -> FastAPI:
     repo_root = Path(root).resolve()
     session_store = store or JsonFileSessionStore(repo_root)
+
+    # `...` sentinel = auto-detect from environment. None = force mock. Else use provided client.
+    if llm_client is ...:
+        resolved_client: LLMClient | None = build_default_client()
+    else:
+        resolved_client = llm_client  # type: ignore[assignment]
+
+    resolved_config = llm_config or LLMConfig(
+        model=os.environ.get("PERSONA_ROUTER_MODEL", "default"),
+        temperature=float(os.environ.get("PERSONA_ROUTER_TEMPERATURE", "0.4")),
+    )
+
     app = FastAPI(title="Persona Router", version="0.1.0")
     web_dir = Path(__file__).resolve().parent / "web"
     if web_dir.exists():
@@ -35,12 +64,31 @@ def create_app(root: Path | str = ".", store: SessionStore | None = None) -> Fas
     def registry():
         return load_registry(default_registry_paths(repo_root), root=repo_root)
 
+    def execute(session, reg, plan):
+        runner = _executor_for(resolved_client, resolved_config)
+        if runner is None:
+            return run_mock_round(session, reg, plan)
+        return runner(session, reg, plan)
+
     @app.get("/", include_in_schema=False)
     def index() -> FileResponse:
         index_path = web_dir / "index.html"
         if not index_path.exists():
             raise HTTPException(status_code=404, detail="Web UI is not packaged")
         return FileResponse(index_path)
+
+    @app.get("/health")
+    def health() -> dict[str, Any]:
+        env = diagnose_llm_environment()
+        return {
+            "status": "ok",
+            "llm": {
+                "enabled": resolved_client is not None,
+                "model": resolved_config.model,
+                "temperature": resolved_config.temperature,
+                **env,
+            },
+        }
 
     @app.get("/agents")
     def list_agents() -> list[dict[str, Any]]:
@@ -80,11 +128,13 @@ def create_app(root: Path | str = ".", store: SessionStore | None = None) -> Fas
             parsed = parse_input(request.text)
             mentioned = session.apply_input(parsed, reg)
             plan = build_turn_plan(session, reg, mentioned)
-            result = run_mock_round(session, reg, plan)
+            result = execute(session, reg, plan)
             session_store.save(session)
             return {"session": session.to_dict(), "round": result.to_dict()}
         except (RegistryError, SessionError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except LLMConfigurationError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     @app.post("/sessions/{session_id}/next")
     def next_round(session_id: str) -> dict[str, Any]:
@@ -94,11 +144,13 @@ def create_app(root: Path | str = ".", store: SessionStore | None = None) -> Fas
             parsed = parse_input("next round")
             mentioned = session.apply_input(parsed, reg)
             plan = build_turn_plan(session, reg, mentioned)
-            result = run_mock_round(session, reg, plan)
+            result = execute(session, reg, plan)
             session_store.save(session)
             return {"session": session.to_dict(), "round": result.to_dict()}
         except (RegistryError, SessionError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except LLMConfigurationError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     return app
 
