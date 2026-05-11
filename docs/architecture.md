@@ -6,12 +6,12 @@ Persona Router has a deliberately small core. The router does not own persona co
 
 ### Registry Loader
 
-`persona_router.registry` loads one or more registry files, validates them against `schemas/persona-agent.schema.json`, resolves handles and aliases, and checks local runtime entrypoints.
+`persona_router.registry` loads one or more registry files, validates them against `persona_router/schemas/persona-agent.schema.json`, resolves handles and aliases, and checks local runtime entrypoints.
 
 Default registry order:
 
-1. `examples/persona-registry.json`
-2. `examples/community-persona-registry.json`
+1. `registries/local.json`
+2. `registries/community.json`
 3. `agents.local.json`, if present
 
 ### Command Parser

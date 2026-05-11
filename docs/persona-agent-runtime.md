@@ -26,7 +26,7 @@ next round
 
 ### Persona
 
-`persona` 是一个可审计的角色包，回答“这个角色如何思考和表达”。例如现有的 `warren-buffett-perspective/persona.json`。
+`persona` 是一个可审计的角色包，回答“这个角色如何思考和表达”。例如现有的 `local-personas/warren-buffett-perspective/persona.json`。
 
 persona 不直接等同会话成员。一个 persona 可以被包装成一个或多个 agent，例如：
 
@@ -59,7 +59,7 @@ persona 不直接等同会话成员。一个 persona 可以被包装成一个或
 
 ## Agent 定义
 
-推荐文件名：`agents.json` 或 `persona-registry.json`。结构可用 [persona-agent.schema.json](/Users/ttu/projects/persona-router/schemas/persona-agent.schema.json) 校验。
+推荐文件名：`agents.json` 或 `persona-registry.json`。结构可用 [persona-agent.schema.json](/Users/ttu/projects/persona-router/persona_router/schemas/persona-agent.schema.json) 校验。
 
 最小结构：
 
@@ -73,7 +73,7 @@ persona 不直接等同会话成员。一个 persona 可以被包装成一个或
       "display_name": "Warren Buffett Perspective",
       "persona_ref": {
         "type": "local_persona_package",
-        "path": "warren-buffett-perspective",
+        "path": "local-personas/warren-buffett-perspective",
         "entrypoint": "SKILL.md",
         "persona_json": "persona.json"
       },
@@ -156,7 +156,7 @@ Input topic
 
 ## Session 状态
 
-session 状态可用 [persona-session.schema.json](/Users/ttu/projects/persona-router/schemas/persona-session.schema.json) 校验。示例见 [session-state.json](/Users/ttu/projects/persona-router/examples/session-state.json)。
+session 状态可用 [persona-session.schema.json](/Users/ttu/projects/persona-router/persona_router/schemas/persona-session.schema.json) 校验。示例见 [session-state.json](/Users/ttu/projects/persona-router/tests/fixtures/session-state.json)。
 
 示例：
 

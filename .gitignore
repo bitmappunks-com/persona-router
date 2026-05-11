@@ -21,9 +21,12 @@ frontend/.vite/
 .env.local
 
 # Generated persona acquisition layers.
-*/discovery/
-*/corpus/*
-!*/corpus/sources.jsonl
-!*/corpus/excerpts.jsonl
-!*/corpus/excerpt-audit.md
-!*/corpus/coverage-matrix.md
+**/discovery/
+**/corpus/raw/
+**/corpus/iteration-*
+**/corpus/acquisition-*
+**/corpus/claim-candidate-*
+**/corpus/excerpts.draft-*
+**/corpus/excerpt-audit.draft-*
+**/research/iteration-*
+**/research/raw/

@@ -15,9 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def make_api_root(tmp_path: Path) -> Path:
     root = tmp_path / "repo"
     root.mkdir()
-    shutil.copytree(ROOT / "schemas", root / "schemas")
-    shutil.copytree(ROOT / "examples", root / "examples")
-    shutil.copytree(ROOT / "warren-buffett-perspective", root / "warren-buffett-perspective")
+    shutil.copytree(ROOT / "registries", root / "registries")
+    shutil.copytree(ROOT / "local-personas", root / "local-personas")
     shutil.copytree(ROOT / "community-personas", root / "community-personas")
     return root
 

@@ -1,0 +1,174 @@
+# Segment Index Report
+
+## Summary
+- Admitted evidence sources expected: 115
+- Sources indexed: 115
+- Missing text sources: 0
+- Sources with zero usable segments: 0
+- Total segments: 6604
+- Segment words: 995,030
+
+## By Research Tag
+- `decisions_actions`: 1856
+- `domain_context`: 2269
+- `expression`: 5906
+- `external_views`: 3613
+- `failures_controversies`: 1106
+- `heuristic`: 1957
+- `interaction_patterns`: 4806
+- `long_conversations`: 3738
+- `mental_model`: 6088
+- `short_expression`: 170
+- `systematic_writings`: 1990
+- `timeline_evolution`: 6206
+
+## By Matched Claim
+- `capital_allocation_role`: 301
+- `circle_of_competence_limits`: 265
+- `cost_and_operating_discipline`: 153
+- `decentralized_management_trust`: 31
+- `external_peer_descriptions`: 570
+- `insurance_float_model`: 258
+- `intrinsic_value_price_discipline`: 95
+- `market_temperament`: 114
+- `owner_partner_orientation`: 11
+- `philanthropy_allocation`: 169
+- `plain_candid_expression`: 1456
+- `qna_teaching_interaction`: 1330
+- `reading_learning_information`: 931
+- `salomon_reputation_ethics`: 149
+- `short_form_public_expression`: 37
+- `succession_planned_transition`: 463
+- `wells_fargo_mistake_accountability`: 435
+
+## By Medium
+- `filing_text`: 60
+- `pdf`: 2242
+- `text`: 815
+- `transcript`: 2238
+- `video_subtitles`: 1249
+
+## By Time Period
+- `berkshire-middle-era`: 565
+- `late-career`: 1857
+- `mature-era`: 2071
+- `partnership-era`: 637
+- `succession-transition`: 1210
+- `unknown`: 264
+
+## Source Segment Counts
+- `src_0071` segments=2, words=115 - Washington Independent Review - Tap Dancing to Work
+- `src_0096` segments=2, words=200 - Gates Notes - Happy 90th, Warren
+- `src_0049` segments=3, words=440 - Bill Gates & Warren Buffett Q&A
+- `src_0057` segments=3, words=259 - Gates Foundation 2006 statement on Buffett announcement
+- `src_0102` segments=3, words=396 - CNBC Archive - Friendship is more important than money
+- `src_0103` segments=3, words=447 - Bill Gates YouTube - Bill Gates and Warren Buffett Q&A
+- `src_0059` segments=4, words=491 - Gates Notes Tap Dancing to Work review
+- `src_0107` segments=4, words=360 - Gates Foundation leadership page - Warren Buffett
+- `src_0108` segments=4, words=366 - Gates Foundation statement on Warren Buffett annual letter
+- `src_0130` segments=4, words=322 - MarketWatch livecard - Buffett touts Greg Abel 2026
+- `src_0132` segments=4, words=256 - MarketWatch livecard - first Greg Abel era Q&A complete
+- `src_0134` segments=4, words=158 - Reuters/CNBC - Buffett charitable giving exceeds 50 billion
+- `src_0054` segments=5, words=671 - PBS NewsHour 2025 trade as weapon short transcript
+- `src_0062` segments=5, words=786 - UPI Salomon practical joke report
+- `src_0073` segments=5, words=329 - Barrons 2026 live card - Abel airs Salomon testimony
+- `src_0056` segments=6, words=988 - Giving Pledge Warren Buffett pledger page
+- `src_0061` segments=6, words=656 - FCIC Stanford hearing page - credibility of credit ratings
+- `src_0063` segments=6, words=726 - SEC General Re Corporation press release 2010
+- `src_0077` segments=6, words=520 - CNBC Ask Warren Buffett 2010 complete transcript download page
+- `src_0078` segments=6, words=380 - CNBC Warren Buffett stock split interview 2010 transcript page
+- `src_0079` segments=6, words=437 - CNBC Ask Warren Buffett 2009 complete transcript page
+- `src_0088` segments=6, words=584 - @WarrenBuffett joins Twitter - CNBC report
+- `src_0111` segments=6, words=733 - UPI archive - Salomon chairman to testify
+- `src_0112` segments=6, words=783 - UPI archive - Practical joke turned into Salomon Treasury bid
+- `src_0055` segments=7, words=846 - Columbia Business School article - Buffett and Gates 2017
+- `src_0081` segments=7, words=442 - CNBC Warren Buffett financial crisis interviews 2008 transcript page
+- `src_0085` segments=7, words=291 - CNBC Archive Afternoon Session - 2024 Meeting
+- `src_0092` segments=7, words=1,136 - Gates Notes - 25 years of learning and laughter
+- `src_0026` segments=8, words=332 - Fortune - How Inflation Swindles the Equity Investor 1977 reprint
+- `src_0027` segments=8, words=332 - Fortune - Avoiding a Mega-Catastrophe derivatives essay
+- `src_0064` segments=8, words=741 - SEC General Re litigation release
+- `src_0120` segments=8, words=1,012 - Giving Pledge official page - Warren Buffett pledge letter
+- `src_0131` segments=8, words=845 - Business Insider - 2026 Berkshire deepfake Buffett question
+- `src_0135` segments=8, words=735 - CNBC - Buffett gives away another $4.1B, resigns Gates Foundation trustee
+- `src_0053` segments=9, words=983 - PBS NewsHour 2006 philanthropy pledge interview
+- `src_0080` segments=9, words=742 - CNBC Three Hours with Warren Buffett 2008 transcript page
+- `src_0022` segments=11, words=1,568 - Berkshire BNSF acquisition announcement
+- `src_0067` segments=11, words=1,008 - CNBC Tesco mistake article
+- `src_0090` segments=11, words=634 - Forbes - Warren Buffett Is In The House, Joins Twitter
+- `src_0114` segments=11, words=724 - New Yorker review - The Snowball
+- `src_0133` segments=11, words=1,274 - CNBC article - shareholders stunned as Buffett announces plan to step down
+- `src_0021` segments=12, words=1,436 - Berkshire Precision Castparts acquisition announcement
+- `src_0065` segments=12, words=1,305 - DOJ General Re / AIG agreement press release
+- `src_0070` segments=13, words=1,653 - CFA Institute review - Tap Dancing to Work
+- `src_0089` segments=13, words=1,396 - CNBC - Buffett on Fed, IBM, and his first tweet
+- `src_0109` segments=13, words=1,135 - PBS NewsHour transcript - Buffett pledges around $30B to Gates Foundation
+- `src_0113` segments=13, words=1,470 - Los Angeles Times archive - Chief to Stay Till Salomon Probe Ends
+- `src_0018` segments=14, words=1,706 - Berkshire Corporate Governance Index
+- `src_0028` segments=14, words=1,146 - New York Times Op-Ed - Buy American. I Am.
+- `src_0083` segments=14, words=1,782 - CNBC Warren Buffett answers emails 2008 transcript final part
+- `src_0122` segments=14, words=934 - SEC complete submission text - 2023 Buffett/Berkshire 13D/A correction
+- `src_0123` segments=14, words=936 - SEC complete submission text - 2024 Buffett/Berkshire 13D/A June donation filing
+- `src_0124` segments=14, words=892 - SEC complete submission text - 2024 Buffett/Berkshire 13D/A November filing
+- `src_0048` segments=15, words=2,501 - CNN Business YouTube - Buffett on Wells Fargo scandal
+- `src_0050` segments=15, words=2,739 - Charlie Rose 2011 Buffett interview part 1
+- `src_0091` segments=17, words=1,043 - Fortune - How Warren Buffett scored big on Twitter
+- `src_0001` segments=18, words=3,074 - Berkshire Hathaway Chairman Letter 1977
+- `src_0066` segments=18, words=2,412 - CNBC Warren Buffett failures / mistakes summary
+- `src_0052` segments=19, words=2,622 - PBS NewsHour 2017 interview part 2
+- `src_0051` segments=20, words=2,545 - PBS NewsHour 2017 interview part 1
+- `src_0097` segments=20, words=3,134 - Bill Gates Reddit AMA transcript mentioning Warren Buffett
+- `src_0087` segments=21, words=3,392 - Bloomberg Television YouTube - Warren Buffett on Investments and Income Inequality full interview
+- `src_0068` segments=23, words=1,926 - Vanity Fair - Warren Buffett hidden stake in derivatives
+- `src_0037` segments=28, words=4,368 - CNBC Squawk Box transcript May 2008
+- `src_0017` segments=29, words=4,914 - Berkshire Hathaway Owner Manual PDF
+- `src_0019` segments=29, words=3,566 - Berkshire 2025 Thanksgiving / Going Quiet Letter
+- `src_0082` segments=31, words=4,584 - CNBC Warren Buffett answers emails 2008 transcript part 1
+- `src_0014` segments=33, words=3,791 - Berkshire Hathaway Chairman Letter 2022
+- `src_0058` segments=33, words=5,330 - Gates Notes 2017 annual letter to Warren Buffett
+- `src_0013` segments=40, words=5,353 - Berkshire Hathaway Chairman Letter 2021
+- `src_0016` segments=47, words=5,636 - Berkshire Hathaway Chairman Letter 2024
+- `src_0069` segments=47, words=7,499 - Vanity Fair - Mr. Warren’s Confession
+- `src_0045` segments=48, words=9,058 - Warren Buffett and Bill Gates University of Washington 1998
+- `src_0025` segments=49, words=5,822 - Fortune - Warren Buffett on the Stock Market 2001
+- `src_0117` segments=49, words=8,226 - CNBC Transcript - Buffett & Munger: A Wealth of Wisdom 2021
+- `src_0015` segments=52, words=6,853 - Berkshire Hathaway Chairman Letter 2023
+- `src_0012` segments=57, words=7,370 - Berkshire Hathaway Chairman Letter 2020
+- `src_0029` segments=58, words=8,335 - Fortune transcript - Warren Buffett at Fortune MPW 2013
+- `src_0005` segments=59, words=9,657 - Berkshire Hathaway Chairman Letter 1994
+- `src_0119` segments=61, words=10,604 - CNBC/Versant Pressroom transcript - Warren Buffett March 31 2026
+- `src_0121` segments=64, words=8,214 - Fortune current archive - The inside story of Warren Buffett 1988
+- `src_0002` segments=66, words=11,410 - Berkshire Hathaway Chairman Letter 1983
+- `src_0118` segments=66, words=10,859 - Acquired YouTube - Charlie Munger audio interview
+- `src_0011` segments=67, words=9,395 - Berkshire Hathaway Chairman Letter 2017
+- `src_0046` segments=68, words=12,709 - Warren Buffett and Bill Gates Columbia University 2017
+- `src_0100` segments=71, words=11,791 - CNBC Full Interview Transcript - Buffett Oct 2017
+- `src_0003` segments=72, words=12,413 - Berkshire Hathaway Chairman Letter 1987
+- `src_0024` segments=77, words=10,427 - Fortune - Mr. Buffett on the Stock Market 1999
+- `src_0116` segments=77, words=13,180 - CNBC full transcript - Charlie Munger: A Life of Wit and Wisdom
+- `src_0047` segments=78, words=14,743 - Warren Buffett Salomon Brothers testimony 1991
+- `src_0110` segments=78, words=14,743 - YouTube - Warren Buffett Salomon Brothers testimony 1991
+- `src_0044` segments=79, words=13,571 - Warren Buffett University of Georgia lecture 2001 alternate
+- `src_0072` segments=79, words=5,539 - AP 2025 - Buffett wisdom on last day leading Berkshire
+- `src_0007` segments=81, words=12,450 - Berkshire Hathaway Chairman Letter 2001
+- `src_0041` segments=86, words=11,508 - CNBC Charlie Rose transcript 2011 - Stop Coddling the Super-Rich
+- `src_0004` segments=92, words=15,460 - Berkshire Hathaway Chairman Letter 1990
+- `src_0008` segments=94, words=13,498 - Berkshire Hathaway Chairman Letter 2008
+- `src_0043` segments=96, words=18,195 - Warren Buffett University of Florida lecture 1998
+- `src_0009` segments=118, words=15,448 - Berkshire Hathaway Chairman Letter 2010
+- `src_0075` segments=134, words=22,251 - The Big Picture repost - FCIC Interview transcript full text
+- `src_0084` segments=135, words=23,650 - CNBC Archive Morning Session - 2024 Meeting
+- `src_0115` segments=141, words=22,613 - CNBC Transcript - Warren Buffett, Charlie Munger and Bill Gates 2014
+- `src_0129` segments=148, words=25,623 - CNBC Archive - Morning Session 1999 Berkshire annual meeting
+- `src_0099` segments=151, words=26,225 - CNBC Full Transcript - Buffett, Munger and Gates May 2017
+- `src_0040` segments=157, words=27,109 - CNBC Squawk Box transcript Feb 2020
+- `src_0038` segments=167, words=28,571 - CNBC Squawk Box transcript Feb 2017
+- `src_0039` segments=170, words=29,805 - CNBC Squawk Box transcript May 2018 with Gates and Munger
+- `src_0010` segments=173, words=23,786 - Berkshire Hathaway Chairman Letter 2014
+- `src_0076` segments=204, words=22,132 - The Oracles Classroom PDF - FCIC Interview With Warren Buffett
+- `src_0086` segments=221, words=39,802 - CNBC Television YouTube full 2024 Berkshire annual meeting
+- `src_0042` segments=229, words=35,796 - CNBC YouTube full 2025 Berkshire annual shareholder meeting
+- `src_0128` segments=229, words=35,796 - YouTube CNBC - Full 2025 Berkshire annual shareholder meeting
+- `src_0098` segments=301, words=48,970 - CNBC Transcript - Warren Buffett and Bill Gates on Squawk Box 2013
+- `src_0020` segments=546, words=82,952 - Berkshire 2025 Annual Report / Greg Abel shareholder letter
+- `src_0104` segments=635, words=87,203 - Complete Buffett Partnership Letters 1957-1970 PDF - Empire/Tilson

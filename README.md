@@ -4,8 +4,8 @@ Persona Router is a stateful routing layer for persona packages and community Ag
 
 It separates four concerns:
 
-- **Persona package**: the evidence-backed role package, such as `warren-buffett-perspective/`.
-- **Community Agent Skill**: imported third-party skills under `community-personas/`.
+- **Local persona packages**: homegrown role packages under `local-personas/` (e.g. `local-personas/warren-buffett-perspective/`). New skills you author belong here.
+- **Community Agent Skills**: imported third-party skills under `community-personas/`.
 - **Agent registry**: the address book that maps handles such as `@feynman` to a runtime package.
 - **Session state**: the active agents, topic, round index, and transcript for a conversation.
 
@@ -100,14 +100,21 @@ The web UI lets you select active agents, inspect source/license/risk metadata, 
 
 ## Key Paths
 
-- `persona_router/`: Python router package.
-- `schemas/`: JSON schemas for registry, session, turn plan, and round result.
-- `examples/persona-registry.json`: local full persona registry example.
-- `examples/community-persona-registry.json`: imported community Agent Skill registry.
-- `community-personas/`: third-party imported Agent Skill text packages.
-- `docs/engineering-todo.md`: engineering roadmap and remaining work.
-- `docs/architecture.md`: system architecture.
-- `docs/security-and-boundaries.md`: default safety and attribution boundaries.
+## Layout
+
+```
+persona-router/
+├── community-personas/             # imported third-party Agent Skills
+├── local-personas/                 # locally authored persona packages
+├── skills/persona-author/          # SKILL teaching how to author a local persona
+├── persona_router/                 # FastAPI + Python runtime (loads schemas/ inside the package)
+├── frontend/                       # Vite + React UI
+├── registries/                     # local.json + community.json — routed by the runtime
+├── scripts/                        # operational scripts (audit, import, evals)
+├── tests/                          # pytest suites + fixtures
+├── evals/                          # router eval cases
+└── docs/                           # system architecture + boundaries + frontend contract
+```
 
 ## Verification
 

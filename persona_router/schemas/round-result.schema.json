@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://persona-router.local/schemas/round-result.schema.json",
+  "title": "Persona Router Round Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "round_index", "turns"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^0\\.1\\.0$"
+    },
+    "round_index": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "needs_verification": {
+      "type": "boolean",
+      "default": false
+    },
+    "boundary_downgraded": {
+      "type": "boolean",
+      "default": false
+    },
+    "turns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/turn"
+      }
+    },
+    "moderator_summary": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "turn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["round_index", "agent_id", "handle", "trigger", "content"],
+      "properties": {
+        "round_index": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{1,63}$"
+        },
+        "handle": {
+          "type": "string"
+        },
+        "trigger": {
+          "type": "string",
+          "enum": ["active", "mentioned", "moderator", "manual"]
+        },
+        "content": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}
+

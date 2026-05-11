@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://persona-router.local/schemas/persona-session.schema.json",
+  "title": "Persona Router Session State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "session_id",
+    "available_agent_ids",
+    "active_agent_ids",
+    "mention_activation_mode",
+    "round_index",
+    "turns"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^0\\.1\\.0$"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "topic": {
+      "type": "string",
+      "maxLength": 4000
+    },
+    "last_user_input": {
+      "type": "string",
+      "maxLength": 4000
+    },
+    "available_agent_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/agent_id"
+      },
+      "uniqueItems": true
+    },
+    "active_agent_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/agent_id"
+      },
+      "uniqueItems": true
+    },
+    "mention_activation_mode": {
+      "type": "string",
+      "enum": ["replace_for_topic", "add_for_topic", "single_turn_only"]
+    },
+    "active_policy": {
+      "type": "string",
+      "enum": ["explicit_active_first", "mentions_replace_for_topic", "mentions_add_for_topic", "single_turn_mentions"]
+    },
+    "round_index": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "turns": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/turn"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  },
+  "$defs": {
+    "agent_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{1,63}$"
+    },
+    "turn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["round_index", "agent_id", "trigger", "content"],
+      "properties": {
+        "round_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "agent_id": {
+          "$ref": "#/$defs/agent_id"
+        },
+        "trigger": {
+          "type": "string",
+          "enum": ["active", "mentioned", "moderator", "manual"]
+        },
+        "content": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@ from pathlib import Path
 import jsonschema
 import pytest
 
+import persona_router as persona_router_pkg
 from persona_router.commands import parse_input
 from persona_router.executor import run_mock_round
 from persona_router.planner import build_turn_plan
@@ -15,25 +16,26 @@ from persona_router.session import RouterSession
 
 
 ROOT = Path(__file__).resolve().parents[1]
+SCHEMAS_DIR = Path(persona_router_pkg.__file__).resolve().parent / "schemas"
 
 
 def load_schema(name: str) -> dict:
-    return json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"))
+    return json.loads((SCHEMAS_DIR / name).read_text(encoding="utf-8"))
 
 
 def test_example_json_files_validate_against_schemas() -> None:
     agent_schema = load_schema("persona-agent.schema.json")
     session_schema = load_schema("persona-session.schema.json")
-    for path in [ROOT / "examples" / "persona-registry.json", ROOT / "examples" / "community-persona-registry.json"]:
+    for path in [ROOT / "registries" / "local.json", ROOT / "registries" / "community.json"]:
         jsonschema.Draft202012Validator(agent_schema).validate(json.loads(path.read_text(encoding="utf-8")))
     jsonschema.Draft202012Validator(session_schema).validate(
-        json.loads((ROOT / "examples" / "session-state.json").read_text(encoding="utf-8"))
+        json.loads((ROOT / "tests" / "fixtures" / "session-state.json").read_text(encoding="utf-8"))
     )
 
 
 def test_turn_plan_and_round_result_validate_against_schemas() -> None:
     registry = load_registry(
-        [Path("examples/persona-registry.json"), Path("examples/community-persona-registry.json")],
+        [Path("registries/local.json"), Path("registries/community.json")],
         root=ROOT,
     )
     session = RouterSession.new(registry, session_id="sess_schema")
@@ -46,7 +48,7 @@ def test_turn_plan_and_round_result_validate_against_schemas() -> None:
 
 
 def test_local_persona_package_runtime_loads_structured_assets() -> None:
-    registry = load_registry([Path("examples/persona-registry.json")], root=ROOT)
+    registry = load_registry([Path("registries/local.json")], root=ROOT)
     runtime = load_runtime_uncached(ROOT, registry.resolve_handle("buffett"))
     assert runtime.kind == "local_persona_package"
     assert "persona_json" in runtime.assets
@@ -77,7 +79,7 @@ def test_local_persona_package_validates_optional_evidence_refs(tmp_path: Path) 
 
 
 def test_all_community_agent_skill_runtimes_pass_weak_validation() -> None:
-    registry = load_registry([Path("examples/community-persona-registry.json")], root=ROOT)
+    registry = load_registry([Path("registries/community.json")], root=ROOT)
     for agent in registry.agents.values():
         runtime = load_runtime_uncached(ROOT, agent)
         assert runtime.kind == "local_agent_skill"

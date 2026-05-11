@@ -178,7 +178,7 @@ def load_registry(
     schema_path: Path | None = None,
 ) -> AgentRegistry:
     root = (root or Path.cwd()).resolve()
-    schema_path = schema_path or root / "schemas" / "persona-agent.schema.json"
+    schema_path = schema_path or Path(__file__).resolve().parent / "schemas" / "persona-agent.schema.json"
     schema = load_json(schema_path)
 
     agents: dict[str, Agent] = {}
@@ -230,11 +230,11 @@ def validate_persona_ref(root: Path, agent: Agent) -> None:
 
 
 def default_registry_paths(root: Path) -> list[Path]:
-    paths = [Path("examples/persona-registry.json")]
-    community = root / "examples" / "community-persona-registry.json"
+    paths = [Path("registries/local.json")]
+    community = root / "registries" / "community.json"
     if community.exists():
-        paths.append(Path("examples/community-persona-registry.json"))
-    local = root / "agents.local.json"
-    if local.exists():
+        paths.append(Path("registries/community.json"))
+    extra = root / "agents.local.json"
+    if extra.exists():
         paths.append(Path("agents.local.json"))
     return paths

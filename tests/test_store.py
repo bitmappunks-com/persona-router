@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_sqlite_session_store_round_trips_session(tmp_path: Path) -> None:
     registry = load_registry(
-        [Path("examples/persona-registry.json"), Path("examples/community-persona-registry.json")],
+        [Path("registries/local.json"), Path("registries/community.json")],
         root=ROOT,
     )
     store = SQLiteSessionStore(tmp_path / "sessions.db")
