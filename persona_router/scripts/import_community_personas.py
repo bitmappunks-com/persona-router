@@ -24,7 +24,7 @@ def main() -> int:
     parser.add_argument("--clone-root", required=True, help="Directory containing upstream repos cloned by slug")
     parser.add_argument("--clone-missing", action="store_true", help="Shallow clone repos that are not present in clone-root")
     parser.add_argument("--output-root", default="community-personas")
-    parser.add_argument("--registry-output", default="registries/community.json")
+    parser.add_argument("--registry-output", default="persona_router/registries/community.json")
     parser.add_argument("--sources-output", default="community-personas/SOURCES.jsonl")
     parser.add_argument("--imported-on", required=True)
     args = parser.parse_args()

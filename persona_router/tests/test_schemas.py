@@ -15,7 +15,7 @@ from persona_router.runtime_loader import RuntimeLoadError, load_persona_json, l
 from persona_router.session import RouterSession
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 SCHEMAS_DIR = Path(persona_router_pkg.__file__).resolve().parent / "schemas"
 
 
@@ -26,16 +26,16 @@ def load_schema(name: str) -> dict:
 def test_example_json_files_validate_against_schemas() -> None:
     agent_schema = load_schema("persona-agent.schema.json")
     session_schema = load_schema("persona-session.schema.json")
-    for path in [ROOT / "registries" / "local.json", ROOT / "registries" / "community.json"]:
+    for path in [ROOT / "persona_router/registries" / "local.json", ROOT / "persona_router/registries" / "community.json"]:
         jsonschema.Draft202012Validator(agent_schema).validate(json.loads(path.read_text(encoding="utf-8")))
     jsonschema.Draft202012Validator(session_schema).validate(
-        json.loads((ROOT / "tests" / "fixtures" / "session-state.json").read_text(encoding="utf-8"))
+        json.loads((ROOT / "persona_router" / "tests" / "fixtures" / "session-state.json").read_text(encoding="utf-8"))
     )
 
 
 def test_turn_plan_and_round_result_validate_against_schemas() -> None:
     registry = load_registry(
-        [Path("registries/local.json"), Path("registries/community.json")],
+        [Path("persona_router/registries/local.json"), Path("persona_router/registries/community.json")],
         root=ROOT,
     )
     session = RouterSession.new(registry, session_id="sess_schema")
@@ -48,7 +48,7 @@ def test_turn_plan_and_round_result_validate_against_schemas() -> None:
 
 
 def test_local_persona_package_runtime_loads_structured_assets() -> None:
-    registry = load_registry([Path("registries/local.json")], root=ROOT)
+    registry = load_registry([Path("persona_router/registries/local.json")], root=ROOT)
     runtime = load_runtime_uncached(ROOT, registry.resolve_handle("buffett"))
     assert runtime.kind == "local_persona_package"
     assert "persona_json" in runtime.assets
@@ -79,7 +79,7 @@ def test_local_persona_package_validates_optional_evidence_refs(tmp_path: Path) 
 
 
 def test_all_community_agent_skill_runtimes_pass_weak_validation() -> None:
-    registry = load_registry([Path("registries/community.json")], root=ROOT)
+    registry = load_registry([Path("persona_router/registries/community.json")], root=ROOT)
     for agent in registry.agents.values():
         runtime = load_runtime_uncached(ROOT, agent)
         assert runtime.kind == "local_agent_skill"

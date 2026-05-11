@@ -9,12 +9,12 @@ from persona_router.registry import Agent, AgentRegistry, load_registry
 from persona_router.session import RouterSession
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_test_registry():
     return load_registry(
-        [Path("registries/local.json"), Path("registries/community.json")],
+        [Path("persona_router/registries/local.json"), Path("persona_router/registries/community.json")],
         root=ROOT,
     )
 

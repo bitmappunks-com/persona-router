@@ -230,10 +230,11 @@ def validate_persona_ref(root: Path, agent: Agent) -> None:
 
 
 def default_registry_paths(root: Path) -> list[Path]:
-    paths = [Path("registries/local.json")]
-    community = root / "registries" / "community.json"
+    pkg_dir = Path(__file__).resolve().parent
+    paths: list[Path] = [pkg_dir / "registries" / "local.json"]
+    community = pkg_dir / "registries" / "community.json"
     if community.exists():
-        paths.append(Path("registries/community.json"))
+        paths.append(community)
     extra = root / "agents.local.json"
     if extra.exists():
         paths.append(Path("agents.local.json"))

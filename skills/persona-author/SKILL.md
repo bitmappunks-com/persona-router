@@ -15,7 +15,7 @@ A local persona package is an auditable runtime artifact, not a prompt. This ski
 
 Don't trigger when:
 - The user is editing an existing persona's wording. Edit the file directly.
-- The user is importing a third-party skill. That goes through `scripts/import_community_personas.py` into `community-personas/`, not here.
+- The user is importing a third-party skill. That goes through `persona_router/scripts/import_community_personas.py` into `community-personas/`, not here.
 
 ## Output layout
 

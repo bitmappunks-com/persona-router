@@ -104,17 +104,16 @@ The web UI lets you select active agents, inspect source/license/risk metadata, 
 
 ```
 persona-router/
-├── community-personas/             # imported third-party Agent Skills
-├── local-personas/                 # locally authored persona packages
-├── skills/persona-author/          # SKILL teaching how to author a local persona
-├── persona_router/                 # FastAPI + Python runtime (loads schemas/ inside the package)
-├── frontend/                       # Vite + React UI
-├── registries/                     # local.json + community.json — routed by the runtime
-├── scripts/                        # operational scripts (audit, import, evals)
-├── tests/                          # pytest suites + fixtures
-├── evals/                          # router eval cases
-└── docs/                           # system architecture + boundaries + frontend contract
+├── community-personas/         # imported third-party Agent Skills
+├── local-personas/             # locally authored persona packages
+├── skills/persona-author/      # SKILL teaching how to author a local persona
+├── persona_router/             # backend: api, registry, schemas, registries,
+│                               # tests, scripts, evals, built UI bundle (web/)
+├── frontend/                   # Vite + React source (builds into persona_router/web/)
+└── docs/architecture.md        # single architecture document
 ```
+
+See [`docs/architecture.md`](docs/architecture.md) for the full system explanation.
 
 ## Verification
 

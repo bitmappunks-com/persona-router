@@ -1,103 +1,156 @@
-# Architecture
+# Persona Router Architecture
 
-Persona Router has a deliberately small core. The router does not own persona content; it owns addressability, active state, turn ordering, and runtime loading.
+A small core. The router owns addressability, active state, turn ordering, runtime loading, and LLM dispatch. It does **not** own persona content.
+
+## Top-level layout
+
+```
+persona-router/
+├── community-personas/             # imported third-party Agent Skills (read-only)
+├── local-personas/                 # homegrown persona packages
+├── skills/persona-author/          # the SKILL that teaches how to write a local persona
+├── persona_router/                 # everything backend
+│   ├── api.py, registry.py, ...    # FastAPI + Python package
+│   ├── schemas/                    # JSON schemas (persona-agent, persona-session, turn-plan, round-result)
+│   ├── registries/                 # local.json + community.json (travel with the install)
+│   ├── evals/                      # router eval cases
+│   ├── tests/                      # pytest + fixtures
+│   ├── scripts/                    # audit / import / run-evals operational scripts
+│   └── web/                        # built React UI served by FastAPI
+├── frontend/                       # Vite + React source (built into persona_router/web/)
+├── docs/                           # this file (architecture only)
+├── Makefile, pyproject.toml, README.md, .env.example, .github/
+```
+
+Five top-level concerns, each with one clear directory. Everything operational about the backend (config, tests, evals, scripts, schemas) sits inside `persona_router/` so the boundary is unambiguous.
+
+## Concepts
+
+**Persona** — a `local-personas/<name>/` or `community-personas/<name>/` package. An auditable bundle of `SKILL.md` + `persona.json` (for local) plus optional corpus/evidence/tests. Answers "how does this voice think and express itself."
+
+**Agent** — a session-addressable wrapper around a persona. Adds `agent_id`, `handle`, `display_name`, `persona_ref`, `activation` policy, `dialogue` role, and registry-level `runtime_boundaries`. One persona can be wrapped as multiple agents (e.g. `@buffett` participant vs `@buffett_critic` reviewer).
+
+**Session** — per-conversation state: `available_agent_ids`, `active_agent_ids`, `topic`, `round_index`, `turns`. Active state is session-local and never written back to registry files.
 
 ## Components
 
-### Registry Loader
+### Registry loader (`persona_router.registry`)
 
-`persona_router.registry` loads one or more registry files, validates them against `persona_router/schemas/persona-agent.schema.json`, resolves handles and aliases, and checks local runtime entrypoints.
+Loads one or more registry files, validates against `persona_router/schemas/persona-agent.schema.json`, resolves handles + aliases, validates that local runtime entrypoints exist on disk.
 
 Default registry order:
 
-1. `registries/local.json`
-2. `registries/community.json`
-3. `agents.local.json`, if present
+1. `persona_router/registries/local.json` (bundled with the install)
+2. `persona_router/registries/community.json` (bundled with the install)
+3. `agents.local.json` at the repo root, if present (operator additions)
 
-### Command Parser
+### Command parser (`persona_router.commands`)
 
-`persona_router.commands` parses user input into intent, mentioned handles, topic, and round instruction.
+Parses user input into `(intent, mentioned_handles, topic, round_instruction)`. Intents: `set_active`, `activate`, `deactivate`, `topic_with_mentions`, `topic`, `next_round`, `list_agents`.
 
-Supported intents:
+### Session manager (`persona_router.session`)
 
-- `set_active`
-- `activate`
-- `deactivate`
-- `topic_with_mentions`
-- `topic`
-- `next_round`
-- `list_agents`
+Persists per-conversation state. Sessions are written to `.persona-router/sessions/<session_id>.json`.
 
-### Session Manager
+Recognized control intents:
 
-`persona_router.session` stores per-conversation state:
+| Input | Effect |
+|---|---|
+| `active @a @b` | replace active set with `[a, b]` |
+| `activate @a` | add `a` to active set |
+| `deactivate @a` | remove `a` from active set |
+| `@a @b <topic>` | update topic; activate `a`,`b` per `mention_activation_mode` |
+| `next round` / `再讨论一轮` | run another round with current active set |
 
-- available agents
-- active agents
-- mention activation mode
-- topic
-- round index
-- turns
+Default `mention_activation_mode = "replace_for_topic"`: when input contains a fresh topic with mentions, replace the active set with the mentioned agents.
 
-Active state is session-local and must not be written back to registry files.
+### Turn planner (`persona_router.planner`)
 
-### Turn Planner
+Deterministic round build:
 
-`persona_router.planner` builds deterministic turn plans:
+1. user `@`-mention order first
+2. otherwise `active_agent_ids` order
+3. agents with `dialogue.role = "moderator"` move to the end unless explicitly `@`-mentioned
 
-1. user mention order
-2. active agent order
-3. moderators/summarizers after participants
+Respects `turn_policy` (`speak_when_active_or_mentioned`, `speak_only_when_mentioned`, `moderate_after_participants`).
 
-It respects `turn_policy` values from the agent registry.
+### Runtime loader (`persona_router.runtime_loader`)
 
-### Runtime Loader
+Reads local runtime packages:
 
-`persona_router.runtime_loader` reads local runtime packages:
+- `local_persona_package` — full bundle: `SKILL.md`, `persona.json`, optional `corpus/`, `evidence/`, `cases.jsonl`, `evals.md`
+- `local_agent_skill` — just a `SKILL.md` entrypoint with optional `SOURCE.md`
+- `inline_prompt` — in-memory prompt for tiny stub agents
 
-- `local_persona_package`: `SKILL.md`, `persona.json`, optional case/eval assets
-- `local_agent_skill`: `SKILL.md`, optional `SOURCE.md`
-- `inline_prompt`: in-memory prompt
+`remote_persona` is a schema-level placeholder; not executed.
 
-Remote personas are schema-level placeholders and are not executed by default.
+### Executor (`persona_router.executor` + `persona_router.llm`)
 
-### Executor
+Two paths share the same `LLMClient` protocol:
 
-`persona_router.executor` currently provides a deterministic mock executor. It appends turns to session state and includes runtime/source metadata, but does not call an LLM.
+- `run_mock_round` — deterministic, no API call. Used when no key is configured and in tests.
+- `run_llm_round` — calls the configured `LLMClient`.
 
-The next executor version should construct per-agent prompts, merge boundaries, and call the configured model.
+`persona_router.llm.OpenAICompatibleClient` is the default adapter; it works with any OpenAI Chat Completions endpoint. Provider selection from env:
 
-### CLI
+| Variable | Effect |
+|---|---|
+| `DEEPSEEK_API_KEY` | DeepSeek at `api.deepseek.com/v1`, model defaults to `deepseek-chat` |
+| `OPENAI_API_KEY` | OpenAI at `api.openai.com/v1`, model defaults to `gpt-4o-mini` |
+| `PERSONA_ROUTER_API_KEY` + `PERSONA_ROUTER_BASE_URL` | fully custom endpoint |
+| `PERSONA_ROUTER_MODEL` | override model |
+| `PERSONA_ROUTER_TEMPERATURE` | default `0.4` |
 
-`persona_router.cli` exposes the current minimum developer workflow:
+`.env` at the repo root is loaded automatically via `python-dotenv`. `/health` reports which mode is active.
 
-- validate
-- list-agents
-- session new
-- active
-- round
-- next
+### Boundaries
 
-## Data Flow
+Persona output is a reasoning perspective, not a real identity claim. Boundaries merge in this order (later layers can only tighten):
 
-```text
+1. Global router boundaries
+2. Registry-level `runtime_boundaries`
+3. Persona package `runtime_boundaries`
+
+Defaults:
+
+- No real-identity claims, no private thoughts, no current holdings, no live private decisions.
+- Current-fact questions (stock prices, leadership, regulations, medical, live politics) are flagged via `assess_boundaries` and the response is marked `needs_verification`.
+- High-risk advice is downgraded to general principles.
+- Third-party community Agent Skills retain `SOURCE.md` attribution.
+
+### API + CLI
+
+`persona_router.api` is a FastAPI app:
+
+| Route | Purpose |
+|---|---|
+| `GET /` + SPA fallback | serves the built React UI |
+| `GET /static/*` | UI assets |
+| `GET /health` | LLM mode + provider/model |
+| `GET /agents` | full registry summary (with stance, boundaries, source metadata) |
+| `POST /sessions` | new session |
+| `GET /sessions/{id}` | load session |
+| `POST /sessions/{id}/active` | set active handles |
+| `POST /sessions/{id}/round` | parse user input + run a round |
+| `POST /sessions/{id}/next` | run another round with current cast |
+
+`persona_router.cli` exposes the same operations: `validate`, `list-agents`, `session new|active|round|next`.
+
+## Data flow
+
+```
 user input
-→ command parser
-→ session state update
-→ turn planner
-→ runtime loader
-→ executor
-→ appended turns
-→ saved session
+  → command parser
+  → session state update
+  → turn planner
+  → runtime loader (reads persona package)
+  → executor (mock or LLM)
+  → turns appended to session
+  → JSON persisted to .persona-router/sessions/
 ```
 
-## Persistence
+## Provenance
 
-Sessions are stored as JSON files under:
+Imported community Agent Skills are recorded in `community-personas/SOURCES.jsonl` (upstream repo, commit, import date, license_status). Most originate from [`xixu-me/awesome-persona-distill-skills`](https://github.com/xixu-me/awesome-persona-distill-skills) under the public-figure / methodology category. Some upstream snapshots lacked a root license file; those are marked `license_missing` in `SOURCES.jsonl` and in each package's `SOURCE.md`. Verify upstream licensing before redistribution.
 
-```text
-.persona-router/sessions/<session_id>.json
-```
-
-This is intentionally simple. A future API server can replace it with SQLite without changing the registry/session contracts.
-
+Local persona packages under `local-personas/` are produced via the workflow described in `skills/persona-author/SKILL.md`. The full authoring spec lives at `skills/persona-author/reference/spec.md`.

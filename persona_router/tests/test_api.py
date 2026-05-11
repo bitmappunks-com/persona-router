@@ -9,13 +9,12 @@ from fastapi.testclient import TestClient
 from persona_router.api import create_app
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def make_api_root(tmp_path: Path) -> Path:
     root = tmp_path / "repo"
     root.mkdir()
-    shutil.copytree(ROOT / "registries", root / "registries")
     shutil.copytree(ROOT / "local-personas", root / "local-personas")
     shutil.copytree(ROOT / "community-personas", root / "community-personas")
     return root

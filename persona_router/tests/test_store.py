@@ -7,12 +7,12 @@ from persona_router.session import RouterSession
 from persona_router.store import SQLiteSessionStore
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_sqlite_session_store_round_trips_session(tmp_path: Path) -> None:
     registry = load_registry(
-        [Path("registries/local.json"), Path("registries/community.json")],
+        [Path("persona_router/registries/local.json"), Path("persona_router/registries/community.json")],
         root=ROOT,
     )
     store = SQLiteSessionStore(tmp_path / "sessions.db")
