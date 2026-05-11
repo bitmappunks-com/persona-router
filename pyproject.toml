@@ -16,6 +16,10 @@ llm = ["openai>=1.30.0"]
 [project.scripts]
 persona-router = "persona_router.cli:main"
 
+[tool.setuptools.packages.find]
+include = ["persona_router*"]
+exclude = ["frontend*", "evals*", "schemas*", "tests*", "docs*", "examples*", "scripts*", "community-personas*", "warren-buffett-perspective*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
