@@ -343,6 +343,53 @@ persona-name-perspective/
 
 `corpus/raw/` 是最先产生、最重要的目录。`sources.jsonl` 中可用于证据的条目必须能回指到这里。没有本地归档的来源，只能作为 `discovery_only`，不得用于摘录、模型或运行时 persona。
 
+### 2.1 入口文件不是完整人格
+
+`SKILL.md` 只是 Codex skill loader 能识别的入口文件，不是完整 persona。只安装或交付一个 `SKILL.md`，本质上仍然是“通用模型 + 风格提示词”，最多只能标记为 `style-guide` 或 `prompt-only-draft`。
+
+完整 persona 必须是一个运行包：
+
+- `SKILL.md`：触发条件、边界、运行流程和文件读取顺序。
+- `persona.json`：机器可读的路由表、核心模型、启发式、证据 ID、置信度、失败模式和版本状态。
+- `corpus/`：来源账本、摘录账本和本地 raw payload。
+- `research/` 与 `evidence/`：从摘录到心智模型的推断链。
+- `tests/`：已知立场、声音、边界和回归用例。
+
+如果运行环境不会读取同目录的 `persona.json`、`corpus/`、`evidence/` 和 `tests/`，则不得宣称这是完整 persona，只能宣称这是一个基于研究材料压缩出来的 skill prompt。
+
+### 2.2 轻量运行包
+
+如果完整 RAG / 证据图谱太重，可以交付轻量运行包，但必须明示状态为 `lightweight-case-card-runtime`，不能宣称等同完整 persona。
+
+轻量运行包的最小结构：
+
+```text
+persona-name-perspective/
+├── SKILL.md
+├── persona.json
+├── cases.jsonl
+└── evals.md
+```
+
+轻量模式的职责划分：
+
+- `SKILL.md`：只做入口、触发、边界和读取顺序。
+- `persona.json`：保留 5-7 个核心模型、5-12 条启发式、路由和诚实边界。
+- `cases.jsonl`：保留 20-40 个案例卡，每张卡必须有 `case_id`、`tags`、`linked_models`、`lesson`、`use_when` 和 `avoid_when`。
+- `evals.md`：至少 20 个回归问题，覆盖已知立场、案例匹配、越界拒绝和声音。
+
+轻量模式的回答流程：
+
+```text
+问题分类
+→ 选择 1-2 个 core_models
+→ 匹配 0-2 个 case cards
+→ 检查边界和不确定性
+→ 输出表达风格
+```
+
+轻量模式不要求每次回答回查完整 `corpus/`，但核心模型和案例卡必须来自已归档证据或人工审定材料。否则它仍然只是 prompt-only draft。
+
 辅助脚本的用途和调用方式详见 [persona-scripts.md](/Users/ttu/projects/persona-router/docs/persona-scripts.md)。这些脚本基于 `nuwa-skill` 的工具层适配而来，生成可分发 persona 时可以复制进 persona 自身的 `scripts/` 目录。
 
 Dokobot 搜索先行和归档准入规则详见 [dokobot-search-skill.md](/Users/ttu/projects/persona-router/docs/dokobot-search-skill.md)。数据采集阶段应先使用 `dokobot search` 发现候选来源，并在写入任何 `corpus/raw/src_*` 文件前完成有用性判断；只有通过准入的来源才允许读取、下载或转写到 raw corpus。如果在 Codex 沙箱中运行 Dokobot CLI，必须按该指南使用非沙箱权限。
@@ -1141,6 +1188,30 @@ Step 6: 对高风险或事实性问题附上不确定性说明
 - 高风险型：医疗、法律、金融、人身安全等必须降级，不得用 persona 权威包装建议。
 - 越界型：要求伪造本人当前观点、私人信息、内部行动、真实身份冒充或隐私推断时拒绝。单纯要求 persona 用第一人称表达，不视为越界。
 
+### 7.3 运行时证据绑定
+
+运行时不能只依赖 `SKILL.md` 中的自然语言总结。`SKILL.md` 必须把自己声明为入口，并要求 agent 在回答前按需读取同目录运行包：
+
+```text
+Step 0: 读取 persona.json 的 routing、core_models、heuristics、runtime_boundaries
+Step 1: 对判断型/事实型问题选择 1-3 个 model_id 或 heuristic_id
+Step 2: 用 evidence_excerpt_ids / counterevidence_excerpt_ids 回查 excerpts.jsonl
+Step 3: 必要时读取对应 raw_path 或 research/*.md
+Step 4: 如果证据不足、来源单一或超出截止日期，降级为框架回答或明确拒绝
+Step 5: 最后再套用 expression-dna 输出
+```
+
+生成 `persona.json` 时，每个核心模型和启发式必须包含：
+
+- 稳定 ID：`model_id` 或 `heuristic_id`
+- 可触发场景：`applicable_contexts`
+- 支撑证据：`evidence_excerpt_ids`
+- 反证或张力：`counterevidence_excerpt_ids` 或 `failure_modes`
+- 置信度：`confidence`
+- 来源多样性：`source_diversity` 或可从 excerpt/source ledger 计算出的等价字段
+
+如果这些字段缺失，模型只能作为文风提示，不能作为 persona 判断核心。
+
 ## 8. 质量检查和交付状态
 
 ### 8.1 Corpus 质量
@@ -1227,6 +1298,7 @@ Step 6: 对高风险或事实性问题附上不确定性说明
 
 - `SKILL.md` 可运行
 - `persona.json` 描述版本、调研时间、覆盖度和状态
+- `persona.json` 可作为运行时数据源，而不是 `SKILL.md` 的重复摘要；路由、模型、启发式、边界都必须能被机器读取
 - `sources.jsonl` 完整记录来源，并包含来源簇、独立性折算和 payload 验证字段
 - `excerpts.jsonl` 支撑核心结论，且来源分布不被单一来源簇垄断
 - `coverage-matrix.md` 显示没有未声明的重大缺口
@@ -1234,7 +1306,10 @@ Step 6: 对高风险或事实性问题附上不确定性说明
 - `evidence/` 中的模型、启发式、表达 DNA 可审计，且核心模型跨 3 个以上来源簇
 - `tests/` 中至少三类测试通过
 - 诚实边界明确写出不能做什么
+- `scripts/quality_check.py <persona_dir>/SKILL.md` 通过 runtime package 检查
 
 否则只能标记为 `draft`。
 
 如果对象材料极其丰富但当前采集只覆盖单一系列来源，例如只采集年度信、只采集一个播客、只采集一本文集，即使 raw 文件数和摘录数达标，也只能交付 `single-source-family-draft` 或 `style/domain framework`，不得标记为完整 persona。
+
+如果最终只交付 `SKILL.md`，无论 `SKILL.md` 写得多像，都不得标记为 `research-backed` 或 `complete`；只能标记为 `prompt-only-draft`。
