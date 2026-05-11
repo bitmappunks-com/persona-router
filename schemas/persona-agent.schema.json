@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://persona-router.local/schemas/persona-agent.schema.json",
+  "title": "Persona Router Agent Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "agents"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^0\\.1\\.0$"
+    },
+    "default_mention_activation_mode": {
+      "type": "string",
+      "enum": ["replace_for_topic", "add_for_topic", "single_turn_only"],
+      "default": "replace_for_topic"
+    },
+    "agents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/agent"
+      }
+    }
+  },
+  "$defs": {
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_id",
+        "handle",
+        "display_name",
+        "persona_ref",
+        "activation",
+        "dialogue",
+        "runtime_boundaries"
+      ],
+      "properties": {
+        "agent_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{1,63}$"
+        },
+        "handle": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_\\-\\u4e00-\\u9fff]{1,64}$"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "persona_ref": {
+          "$ref": "#/$defs/persona_ref"
+        },
+        "activation": {
+          "$ref": "#/$defs/activation"
+        },
+        "dialogue": {
+          "$ref": "#/$defs/dialogue"
+        },
+        "runtime_boundaries": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "persona_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["local_persona_package", "inline_prompt", "remote_persona"]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entrypoint": {
+          "type": "string",
+          "default": "SKILL.md"
+        },
+        "persona_json": {
+          "type": "string",
+          "default": "persona.json"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "local_persona_package"
+              }
+            }
+          },
+          "then": {
+            "required": ["path", "entrypoint", "persona_json"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "inline_prompt"
+              }
+            }
+          },
+          "then": {
+            "required": ["prompt"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "remote_persona"
+              }
+            }
+          },
+          "then": {
+            "required": ["url"]
+          }
+        }
+      ]
+    },
+    "activation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_active", "allow_manual_toggle", "aliases"],
+      "properties": {
+        "default_active": {
+          "type": "boolean"
+        },
+        "allow_manual_toggle": {
+          "type": "boolean"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "dialogue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "stance", "turn_policy", "max_words_per_turn", "can_question_others"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["participant", "moderator", "critic", "summarizer"]
+        },
+        "stance": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "turn_policy": {
+          "type": "string",
+          "enum": [
+            "speak_when_active_or_mentioned",
+            "speak_only_when_mentioned",
+            "moderate_after_participants"
+          ]
+        },
+        "max_words_per_turn": {
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 800
+        },
+        "can_question_others": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

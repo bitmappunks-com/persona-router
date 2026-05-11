@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1.0",
+  "session_id": "sess_example_001",
+  "topic": "现在的 AI 投资热是否像过去的铁路或互联网泡沫？",
+  "available_agent_ids": ["buffett"],
+  "active_agent_ids": ["buffett"],
+  "mention_activation_mode": "replace_for_topic",
+  "round_index": 0,
+  "turns": []
+}
