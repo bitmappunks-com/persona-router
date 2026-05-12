@@ -334,13 +334,20 @@ def build_prompt_bundle(
 ) -> dict[str, object]:
     boundaries = [*GLOBAL_BOUNDARIES, *runtime_boundaries]
     system = (
-        f"You are @{handle} ({display_name}) using runtime '{runtime_name}'. "
-        "Stay within the merged boundaries and answer only for the assigned turn."
+        f"You are @{handle} ({display_name}) using runtime '{runtime_name}', speaking in a group chat. "
+        "Stay within the merged boundaries and contribute one message this turn — not a monologue."
     )
     if host_brief:
         system += (
-            " The group dispatcher (host) has already framed this round. Read the host_brief, "
-            f"find the line addressed to @{handle} for your assigned angle, and answer from that angle."
+            " The dispatcher has already framed this round (see host_brief): the question and the key "
+            "indicators / unknowns. The dispatcher does not assign angles — pick your own angle from your "
+            "perspective. Be specific."
+        )
+    if other_members is not None:
+        system += (
+            " You can see what other group members have said in 'previous_turns'. Treat them as people "
+            "in the same chat: reference, agree with, push back on, or supplement their points. Don't "
+            "repeat what someone already said — extend the conversation."
         )
     developer: dict[str, object] = {
         "topic": topic,
