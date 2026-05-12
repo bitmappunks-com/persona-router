@@ -16,6 +16,9 @@ class SessionStore(Protocol):
     def save(self, session: RouterSession) -> None:
         """Persist one session."""
 
+    def list(self) -> list[dict]:
+        """Return summary rows {session_id, topic, member_count, round_index, updated_at} newest first."""
+
 
 class JsonFileSessionStore:
     def __init__(self, root: Path | str) -> None:
@@ -26,6 +29,29 @@ class JsonFileSessionStore:
 
     def save(self, session: RouterSession) -> None:
         save_session(session, session_path(self.root, session.session_id))
+
+    def list(self) -> list[dict]:
+        dir_path = self.root / ".persona-router" / "sessions"
+        if not dir_path.exists():
+            return []
+        rows: list[dict] = []
+        for path in dir_path.glob("*.json"):
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            rows.append(
+                {
+                    "session_id": payload.get("session_id") or path.stem,
+                    "topic": payload.get("topic"),
+                    "member_count": len(payload.get("active_agent_ids", [])),
+                    "round_index": int(payload.get("round_index", 0)),
+                    "turn_count": len(payload.get("turns", [])),
+                    "updated_at": datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).isoformat(),
+                }
+            )
+        rows.sort(key=lambda r: r["updated_at"], reverse=True)
+        return rows
 
 
 class SQLiteSessionStore:
@@ -57,6 +83,29 @@ class SQLiteSessionStore:
                 """,
                 (session.session_id, payload, updated_at),
             )
+
+    def list(self) -> list[dict]:
+        with sqlite3.connect(self.path) as conn:
+            cursor = conn.execute(
+                "SELECT session_id, payload, updated_at FROM sessions ORDER BY updated_at DESC"
+            )
+            rows: list[dict] = []
+            for session_id, payload, updated_at in cursor:
+                try:
+                    data = json.loads(payload)
+                except json.JSONDecodeError:
+                    continue
+                rows.append(
+                    {
+                        "session_id": session_id,
+                        "topic": data.get("topic"),
+                        "member_count": len(data.get("active_agent_ids", [])),
+                        "round_index": int(data.get("round_index", 0)),
+                        "turn_count": len(data.get("turns", [])),
+                        "updated_at": updated_at,
+                    }
+                )
+        return rows
 
     def _initialize(self) -> None:
         with sqlite3.connect(self.path) as conn:

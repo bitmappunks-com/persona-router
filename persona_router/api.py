@@ -111,6 +111,10 @@ def create_app(
         session_store.save(session)
         return {"session": session.to_dict()}
 
+    @app.get("/sessions")
+    def list_sessions() -> list[dict[str, Any]]:
+        return session_store.list()
+
     @app.get("/sessions/{session_id}")
     def get_session(session_id: str) -> dict[str, Any]:
         try:

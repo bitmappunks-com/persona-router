@@ -7,7 +7,8 @@ import {
 } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../api";
-import { Avatar } from "../components/Avatar";
+import { Avatar, avatarUrl } from "../components/Avatar";
+import { MembersDrawer } from "../components/MembersDrawer";
 import { useAppState } from "../state";
 import type {
   Agent,
@@ -46,22 +47,22 @@ interface ChatBlock {
   pending?: boolean;
 }
 
-export function SessionPage() {
+export function GroupPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { agents, health } = useAppState();
 
   const [session, setSession] = useState<SessionData | null>(null);
   const [active, setActive] = useState<string[]>([]);
-  const [selected, setSelected] = useState<Agent | null>(null);
   const [rounds, setRounds] = useState<RoundData[]>([]);
   const [composer, setComposer] = useState("");
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState<StatusState>({ message: "就绪", isError: false });
+  const [status, setStatus] = useState<StatusState>({ message: "", isError: false });
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sentMessages, setSentMessages] = useState<string[]>([]);
   const [streaming, setStreaming] = useState<StreamingRound | null>(null);
+  const [drawerAgent, setDrawerAgent] = useState<Agent | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const transcriptRef = useRef<HTMLDivElement>(null);
 
@@ -105,26 +106,25 @@ export function SessionPage() {
   useEffect(() => {
     (async () => {
       try {
-        if (!id || id === "new") {
-          const { session: created } = await api.createSession();
-          navigate(`/session/${created.session_id}`, { replace: true });
+        if (!id) {
+          navigate("/", { replace: true });
           return;
         }
         const data = await api.getSession(id);
         setSession(data);
         setActive([...data.active_agent_ids]);
-        const llmLabel = health?.llm.enabled
-          ? `${health.llm.provider ?? "llm"} · ${health.llm.model}`
-          : "mock 模式";
-        setStatus({ message: llmLabel, isError: false });
+        setRounds([]);
+        setSentMessages([]);
+        setComposer("");
+        setStreaming(null);
+        setStatus({ message: "", isError: false });
       } catch (error) {
         handleError(error);
       } finally {
         setLoading(false);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, navigate, handleError]);
 
   useEffect(() => {
     const el = transcriptRef.current;
@@ -151,7 +151,6 @@ export function SessionPage() {
 
   const toggleAgent = useCallback(
     (agent: Agent) => {
-      setSelected(agent);
       const next = active.includes(agent.agent_id)
         ? active.filter((x) => x !== agent.agent_id)
         : [...active, agent.agent_id];
@@ -169,14 +168,14 @@ export function SessionPage() {
       }
       const canStream = !!health?.llm.enabled;
       setBusy(true);
-      setStatus({ message: canStream ? "正在生成…" : "发送中…", isError: false });
+      setStatus({ message: canStream ? "生成中…" : "发送中…", isError: false });
       let userText = "";
       let messageText = "";
       try {
         if (kind === "round") {
           const trimmed = composer.trim();
           if (!trimmed) {
-            setStatus({ message: "先写点什么再发", isError: true });
+            setStatus({ message: "写一句话再发吧", isError: true });
             setBusy(false);
             return;
           }
@@ -197,11 +196,10 @@ export function SessionPage() {
           setSession(payload.session);
           setActive([...payload.session.active_agent_ids]);
           setRounds((prev) => [...prev, payload.round]);
-          setStatus({ message: `第 ${payload.round.round_index} 轮 · mock`, isError: false });
+          setStatus({ message: "", isError: false });
           return;
         }
 
-        // Streaming path
         setSentMessages((prev) => [...prev, userText]);
         if (kind === "round") setComposer("");
         const events =
@@ -292,8 +290,7 @@ export function SessionPage() {
           },
         ]);
         setStreaming(null);
-        const llmLabel = `${health?.llm.provider ?? "llm"} · ${health?.llm.model ?? ""}`;
-        setStatus({ message: `第 ${roundIndex} 轮 · ${llmLabel}`, isError: false });
+        setStatus({ message: "", isError: false });
       } catch (error) {
         setStreaming(null);
         handleError(error);
@@ -304,105 +301,74 @@ export function SessionPage() {
     [active.length, activeAgents, composer, handleError, health, session],
   );
 
-  const filteredAgents = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return agents;
-    return agents.filter((agent) => {
-      const haystack = `${agent.handle} ${agent.display_name} ${(agent.domains || []).join(" ")}`.toLowerCase();
-      return haystack.includes(q);
-    });
-  }, [agents, query]);
-
-  const inspectorAgent = selected || activeAgents[0] || null;
-  const groupTitle = session?.topic;
-  const memberCount = activeAgents.length;
+  const onSelectAgent = useCallback((agent: Agent) => {
+    setDrawerAgent(agent);
+    setDrawerOpen(true);
+  }, []);
 
   if (loading) {
     return (
-      <section className="section container">
-        <div className="eyebrow muted">正在打开群聊…</div>
+      <section className="landing-empty">
+        <div className="landing-pulse" />
+        <h2>打开群聊…</h2>
       </section>
     );
   }
 
-  return (
-    <div className="session">
-      <aside className="session-rail" aria-label="成员列表">
-        <div className="session-rail-head">
-          <div className="eyebrow" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-            <span>群成员</span>
-            <span className="mono" style={{ color: "var(--muted-2)" }}>{memberCount}</span>
-          </div>
-          <input
-            className="rail-search"
-            type="search"
-            placeholder="搜索可拉进群的成员"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-        </div>
-        <div className="rail-list">
-          {filteredAgents.map((agent) => {
-            const isActive = active.includes(agent.agent_id);
-            return (
-              <button
-                key={agent.agent_id}
-                type="button"
-                className={`rail-row ${isActive ? "active" : ""}`}
-                onClick={() => toggleAgent(agent)}
-                title={isActive ? "踢出群组" : "拉进群组"}
-              >
-                <Avatar agent={agent} size="sm" />
-                <div>
-                  <div className="rail-row-name">{agent.display_name}</div>
-                  <div className="rail-row-handle">@{agent.handle}</div>
-                </div>
-                <span className="rail-row-toggle" />
-              </button>
-            );
-          })}
-        </div>
-      </aside>
+  const groupTitle = session?.topic;
+  const memberCount = activeAgents.length;
 
-      <main className="session-stage" aria-label="群聊对话">
-        <header className="stage-head">
-          <div className="eyebrow accent">群聊</div>
-          <h1 className={`stage-title ${groupTitle ? "" : "empty"}`}>
-            {groupTitle || (memberCount > 0 ? "拉好人了，发一条消息看看大家怎么说" : "先从左边拉成员进群")}
-          </h1>
-          {memberCount > 0 ? (
-            <div className="cast-strip-inline" aria-label="群组成员">
-              {activeAgents.map((agent) => (
-                <button
-                  key={agent.agent_id}
-                  type="button"
-                  className="member-chip"
-                  title={`踢出 @${agent.handle}`}
-                  onClick={() => void pushActive(active.filter((x) => x !== agent.agent_id))}
-                >
-                  <Avatar agent={agent} size="xs" />
-                  <span className="member-chip-name">{agent.display_name}</span>
-                  <span className="member-chip-cross">×</span>
+  return (
+    <>
+      <div className={`chat-pane ${drawerOpen ? "with-drawer" : ""}`}>
+        <header className="chat-head">
+          <div className="chat-head-main">
+            <h1 className={`chat-title ${groupTitle ? "" : "empty"}`}>
+              {groupTitle || "新群组"}
+            </h1>
+            <div className="chat-subline">
+              {memberCount > 0 ? (
+                <>
+                  <button
+                    className="chat-members-summary"
+                    type="button"
+                    onClick={() => setDrawerOpen((v) => !v)}
+                  >
+                    {activeAgents.slice(0, 6).map((agent) => (
+                      <span key={agent.agent_id} className="chat-member-dot" title={agent.display_name}>
+                        <img src={avatarUrl(agent.handle)} alt="" />
+                      </span>
+                    ))}
+                    <span className="chat-member-count">{memberCount} 人在群</span>
+                  </button>
+                </>
+              ) : (
+                <button type="button" className="chat-add-cta" onClick={() => setDrawerOpen(true)}>
+                  + 拉人进群
                 </button>
-              ))}
-              <button
-                type="button"
-                className="member-chip-clear"
-                onClick={() => void pushActive([])}
-                title="清空群成员"
-              >
-                清空
-              </button>
+              )}
+              {session ? (
+                <span className="chat-session-id mono">·{session.session_id.replace(/^sess_/, "").slice(0, 8)}</span>
+              ) : null}
             </div>
-          ) : null}
+          </div>
+          <button
+            type="button"
+            className="chat-drawer-toggle"
+            onClick={() => setDrawerOpen((v) => !v)}
+            aria-pressed={drawerOpen}
+            title={drawerOpen ? "收起成员栏" : "展开成员栏"}
+          >
+            {drawerOpen ? "›" : "‹"}
+          </button>
         </header>
 
         <div className="chat-scroll" ref={transcriptRef}>
           {blocks.length === 0 ? (
-            <div className="empty-chat">
+            <div className="chat-empty">
               <div className="ornament">💬</div>
-              <h2>新群组，还没人说话</h2>
-              <p>从左边拉成员进群，然后发一条消息。</p>
+              <h2>{memberCount > 0 ? "发条消息试试" : "先从右边拉人进群"}</h2>
+              <p>{memberCount > 0 ? "调度员会先摆出事实，然后大家自由发言。" : "拉好人之后发消息，调度员先发言，其他人按各自角色接话。"}</p>
             </div>
           ) : (
             blocks.map((block) => (
@@ -419,7 +385,7 @@ export function SessionPage() {
                     key={`${turn.round_index}-${turn.agent_id}-${turn.trigger}`}
                     turn={turn}
                     agent={agents.find((a) => a.agent_id === turn.agent_id)}
-                    onSelect={setSelected}
+                    onSelect={onSelectAgent}
                     streaming={Boolean(block.pending && turn.metadata && (turn.metadata as { streaming?: boolean }).streaming)}
                   />
                 ))}
@@ -447,9 +413,15 @@ export function SessionPage() {
               placeholder={memberCount > 0 ? "发消息到群里 …" : "先拉成员进群"}
               value={composer}
               onChange={(event) => setComposer(event.target.value)}
-              disabled={memberCount === 0}
+              disabled={memberCount === 0 || busy}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+                  event.preventDefault();
+                  if (!busy && memberCount > 0) void submitMessage("round");
+                }
+              }}
             />
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <div className="composer-actions">
               <button
                 type="button"
                 className="btn btn-ghost"
@@ -460,30 +432,30 @@ export function SessionPage() {
                 ↻ 继续
               </button>
               <button className="btn btn-primary" type="submit" disabled={busy || memberCount === 0}>
-                {busy ? "发送中…" : "发送 →"}
+                {busy ? "…" : "发送"}
               </button>
             </div>
           </div>
-          <div
-            className={`composer-status ${status.isError ? "error" : ""} ${busy ? "busy" : ""}`}
-          >
-            <span className="dot" />
-            <span>{status.message}</span>
-          </div>
+          {status.message ? (
+            <div className={`composer-status ${status.isError ? "error" : ""} ${busy ? "busy" : ""}`}>
+              <span className="dot" />
+              <span>{status.message}</span>
+            </div>
+          ) : null}
         </form>
-      </main>
+      </div>
 
-      <aside className="session-side" aria-label="成员资料">
-        <div className="eyebrow" style={{ marginBottom: 14 }}>
-          成员资料
-        </div>
-        {!inspectorAgent ? (
-          <p className="empty">点群里任一头像查看来源、许可证、边界。</p>
-        ) : (
-          <SideCard agent={inspectorAgent} />
-        )}
-      </aside>
-    </div>
+      <MembersDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        allAgents={agents}
+        active={active}
+        onToggle={toggleAgent}
+        onClearAll={() => void pushActive([])}
+        selectedAgent={drawerAgent}
+        onSelectAgent={setDrawerAgent}
+      />
+    </>
   );
 }
 
@@ -618,60 +590,6 @@ function DispatcherBubble({
           </div>
         ) : null}
       </div>
-    </div>
-  );
-}
-
-function SideCard({ agent }: { agent: Agent }) {
-  const source = agent.source || {};
-  const repo = source.source_repository || source.upstream_repository || "";
-  const commit = source.source_commit || source.upstream_commit || "";
-  return (
-    <div className="card">
-      <div className="top">
-        <Avatar agent={agent} size="md" />
-        <div>
-          <div className="name">{agent.display_name}</div>
-          <div className="handle">@{agent.handle}</div>
-        </div>
-      </div>
-      <span className={`chip tone-${(agent.risk_level || "medium").toLowerCase()}`}>
-        {agent.risk_level || "medium"} 风险
-      </span>
-      <dl>
-        <div>
-          <dt>许可证</dt>
-          <dd>{source.license_status || "license_unknown"}</dd>
-        </div>
-        <div>
-          <dt>来源</dt>
-          <dd>
-            {repo ? (
-              <a href={repo} target="_blank" rel="noreferrer">
-                {repo.replace(/^https?:\/\//, "")}
-              </a>
-            ) : (
-              <em>未提供</em>
-            )}
-          </dd>
-        </div>
-        <div>
-          <dt>提交</dt>
-          <dd>
-            {commit ? (
-              <code className="mono" style={{ fontSize: 11 }}>
-                {commit.slice(0, 12)}
-              </code>
-            ) : (
-              <em>—</em>
-            )}
-          </dd>
-        </div>
-        <div>
-          <dt>擅长领域</dt>
-          <dd>{(agent.domains || []).join(" · ") || <em>—</em>}</dd>
-        </div>
-      </dl>
     </div>
   );
 }

@@ -77,9 +77,19 @@ async function* streamSSE(path: string, init: RequestInit): AsyncGenerator<Strea
   }
 }
 
+export interface SessionSummary {
+  session_id: string;
+  topic: string | null;
+  member_count: number;
+  round_index: number;
+  turn_count: number;
+  updated_at: string;
+}
+
 export const api = {
   health: () => request<HealthInfo>("/health"),
   listAgents: () => request<Agent[]>("/agents"),
+  listSessions: () => request<SessionSummary[]>("/sessions"),
   createSession: () =>
     request<{ session: SessionData }>("/sessions", { method: "POST" }),
   getSession: (sessionId: string) =>
