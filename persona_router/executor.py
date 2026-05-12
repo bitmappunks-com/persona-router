@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Protocol
+from typing import Any, Iterator, Protocol
 
 from .boundaries import assess_boundaries
 from .planner import TurnPlan
@@ -42,6 +42,17 @@ class LLMConfig:
 class LLMClient(Protocol):
     def complete(self, system: str, developer: dict[str, Any], model: str, temperature: float) -> str:
         """Return one agent turn for the provided prompt bundle."""
+
+
+class StreamingLLMClient(LLMClient, Protocol):
+    def stream(
+        self,
+        system: str,
+        developer: dict[str, Any],
+        model: str,
+        temperature: float,
+    ) -> Iterator[str]:
+        """Yield text deltas for one agent turn."""
 
 
 def run_mock_round(session: RouterSession, registry: AgentRegistry, plan: TurnPlan) -> RoundResult:
@@ -161,6 +172,95 @@ def run_llm_round(
         needs_verification=boundary.needs_verification,
         boundary_downgraded=boundary.should_downgrade or boundary.needs_verification,
     )
+
+
+def run_llm_round_stream(
+    session: RouterSession,
+    registry: AgentRegistry,
+    plan: TurnPlan,
+    client: StreamingLLMClient,
+    config: LLMConfig | None = None,
+) -> Iterator[dict[str, Any]]:
+    """Yield event dicts for a round, streaming each agent's tokens.
+
+    Event shapes:
+        {"event": "round_start", "round_index": N, "topic": "..."}
+        {"event": "turn_start", "agent_id": "...", "handle": "...", "display_name": "...", "trigger": "..."}
+        {"event": "token", "agent_id": "...", "delta": "..."}
+        {"event": "turn_end", "agent_id": "...", "content": "...", "metadata": {...}}
+        {"event": "round_end", "round_index": N, "needs_verification": bool, "boundary_downgraded": bool}
+    """
+    config = config or LLMConfig()
+    boundary = assess_boundaries(plan.topic)
+    yield {"event": "round_start", "round_index": plan.round_index, "topic": plan.topic}
+    completed_turns: list[dict[str, Any]] = []
+
+    for item in plan.items:
+        agent = registry.get(item.agent_id)
+        runtime = load_runtime_uncached(registry.root, agent)
+        source = {**agent.source, **runtime.source}
+        prompts = build_prompt_bundle(
+            agent.display_name,
+            agent.handle,
+            runtime.name,
+            runtime.skill_text_excerpt,
+            runtime.boundaries,
+            plan.topic,
+            plan.allow_cross_questions,
+            session.turns,
+        )
+        yield {
+            "event": "turn_start",
+            "agent_id": item.agent_id,
+            "handle": agent.handle,
+            "display_name": agent.display_name,
+            "trigger": item.trigger,
+        }
+        buffer: list[str] = []
+        for chunk in client.stream(
+            system=str(prompts["system"]),
+            developer=prompts["developer"],
+            model=config.model,
+            temperature=config.temperature,
+        ):
+            if not chunk:
+                continue
+            buffer.append(chunk)
+            yield {"event": "token", "agent_id": item.agent_id, "delta": chunk}
+        content = "".join(buffer).strip()
+        content = limit_words(content, int(agent.dialogue.get("max_words_per_turn", 260)))
+        metadata = {
+            "mock": False,
+            "boundary": boundary.to_dict(),
+            "prompts": prompts,
+            "runtime_kind": runtime.kind,
+            "runtime_entrypoint": runtime.entrypoint,
+            "runtime_path": str(runtime.path) if runtime.path else None,
+            "source": source,
+            "model": config.model,
+            "temperature": config.temperature,
+            "streamed": True,
+        }
+        session.append_turn(plan.round_index, item.agent_id, item.trigger, content, metadata)
+        turn_payload = {
+            "round_index": plan.round_index,
+            "agent_id": item.agent_id,
+            "handle": agent.handle,
+            "trigger": item.trigger,
+            "content": content,
+            "metadata": metadata,
+        }
+        completed_turns.append(turn_payload)
+        yield {"event": "turn_end", **turn_payload}
+
+    session.round_index = plan.round_index
+    yield {
+        "event": "round_end",
+        "round_index": plan.round_index,
+        "needs_verification": boundary.needs_verification,
+        "boundary_downgraded": boundary.should_downgrade or boundary.needs_verification,
+        "turns": completed_turns,
+    }
 
 
 def build_mock_content(

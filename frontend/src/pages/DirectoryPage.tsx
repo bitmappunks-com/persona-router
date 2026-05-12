@@ -24,17 +24,17 @@ export function DirectoryPage() {
     <section className="section container">
       <div className="section-head">
         <div>
-          <div className="eyebrow accent">Directory</div>
-          <h2>{agents.length} voices in the registry.</h2>
+          <div className="eyebrow accent">成员名录</div>
+          <h2>{agents.length} 位待邀成员。</h2>
         </div>
-        <div className="eyebrow muted">{filtered.length} matching</div>
+        <div className="eyebrow muted">命中 {filtered.length} 位</div>
       </div>
 
       <div className="directory-toolbar">
         <input
           className="search-input"
           type="search"
-          placeholder="Search by name, handle, or domain"
+          placeholder="按姓名、handle、领域搜索"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -46,7 +46,7 @@ export function DirectoryPage() {
               className={risk === option ? "active" : ""}
               onClick={() => setRisk(option)}
             >
-              {option === "all" ? "All risk" : `${option} risk`}
+              {option === "all" ? "全部" : option === "low" ? "低风险" : option === "medium" ? "中风险" : "高风险"}
             </button>
           ))}
         </div>
@@ -69,12 +69,12 @@ export function DirectoryPage() {
             <div className="persona-card-stance">
               {agent.stance ||
                 (agent.domains && agent.domains.length > 0
-                  ? `Speaks on ${agent.domains.slice(0, 3).join(" · ")}.`
-                  : "A voice in the directory.")}
+                  ? `擅长：${agent.domains.slice(0, 3).join(" · ")}`
+                  : "名录中的一位成员。")}
             </div>
             <div className="persona-card-meta">
               <span className={`chip tone-${(agent.risk_level || "medium").toLowerCase()}`}>
-                {agent.risk_level || "medium"} risk
+                {agent.risk_level || "medium"} 风险
               </span>
               {(agent.domains || []).slice(0, 2).map((d) => (
                 <span key={d} className="chip">

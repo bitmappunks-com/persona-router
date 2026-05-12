@@ -10,7 +10,7 @@ export function HomePage() {
   const [starting, setStarting] = useState(false);
   const featured = agents.slice(0, 6);
 
-  const startSession = async () => {
+  const startGroup = async () => {
     setStarting(true);
     try {
       const { session } = await api.createSession();
@@ -24,23 +24,23 @@ export function HomePage() {
     <>
       <section className="hero container">
         <div className="hero-eyebrow">
-          <span>The council</span>
+          <span>Persona Router</span>
           <span className="sep" />
-          <span>persona router</span>
+          <span>群聊式多人格</span>
         </div>
         <h1>
-          Convene a <em>council</em> of voices, set a subject, watch them argue it out.
+          建一个 <em>群</em>，把想听的人拉进来，一起聊。
         </h1>
         <p>
-          {agents.length || "Dozens of"} personas — Feynman, Jobs, Buffett, Marx, Mao, MrBeast and more — packaged with sources, licenses, and behavioural boundaries.
-          Pick a few, give them a topic, run the round.
+          {agents.length || "几十"} 个人格成员 —— Feynman、Jobs、Buffett、Marx、MrBeast 等等 —— 每个都带源、许可证、行为边界。
+          新建群组、添加成员、发条消息，看大家怎么回。
         </p>
         <div className="hero-actions">
-          <button className="btn btn-primary" onClick={startSession} disabled={starting}>
-            {starting ? "Opening session…" : "Open a session →"}
+          <button className="btn btn-primary" onClick={startGroup} disabled={starting}>
+            {starting ? "正在新建群组…" : "新建群组 →"}
           </button>
           <Link to="/personas" className="btn btn-ghost">
-            Browse the directory
+            浏览成员名录
           </Link>
         </div>
       </section>
@@ -49,18 +49,18 @@ export function HomePage() {
         <div className="feature-grid">
           <div className="feature">
             <div className="feature-icon">§</div>
-            <h3>Persona-backed</h3>
-            <p>Each voice ships with source, license, evidence and behavioural boundaries — not just a prompt.</p>
+            <h3>有据可查</h3>
+            <p>每个成员都打包了原始资料、许可证、证据和行为边界，不只是一句 prompt。</p>
           </div>
           <div className="feature">
             <div className="feature-icon">¶</div>
-            <h3>Multi-voice rounds</h3>
-            <p>Summon several personas at once with <span className="mono">@handle</span>, then run rounds where each speaks in turn.</p>
+            <h3>群聊式对话</h3>
+            <p>用 <span className="mono">@handle</span> 把多人拉进群，发一条消息，他们按顺序在群里回。</p>
           </div>
           <div className="feature">
             <div className="feature-icon">★</div>
-            <h3>Provider-agnostic</h3>
-            <p>OpenAI-compatible LLM executor. {health?.llm.enabled ? `Currently routing through ${health.llm.provider}.` : "Set DEEPSEEK_API_KEY (or OPENAI_API_KEY) to go live."}</p>
+            <h3>多模型可换</h3>
+            <p>OpenAI 兼容协议接口。{health?.llm.enabled ? `当前接的是 ${health.llm.provider}。` : "在 .env 设 DEEPSEEK_API_KEY 或 OPENAI_API_KEY 即可上线。"}</p>
           </div>
         </div>
       </section>
@@ -68,11 +68,11 @@ export function HomePage() {
       <section className="section container">
         <div className="section-head">
           <div>
-            <div className="eyebrow accent">Featured voices</div>
-            <h2>Six of the {agents.length} on call tonight.</h2>
+            <div className="eyebrow accent">推荐成员</div>
+            <h2>{agents.length} 位待邀，先看 6 个。</h2>
           </div>
           <Link to="/personas" className="btn-link">
-            See all {agents.length} →
+            查看全部 {agents.length} →
           </Link>
         </div>
         <div className="persona-grid">
@@ -92,8 +92,8 @@ export function HomePage() {
               <div className="persona-card-stance">
                 {agent.stance ||
                   (agent.domains && agent.domains.length > 0
-                    ? `Speaks on ${agent.domains.slice(0, 3).join(" · ")}.`
-                    : "A voice in the directory.")}
+                    ? `擅长：${agent.domains.slice(0, 3).join(" · ")}`
+                    : "名录中的一位成员。")}
               </div>
               <div className="persona-card-meta">
                 {(agent.domains || []).slice(0, 3).map((d) => (
@@ -109,7 +109,7 @@ export function HomePage() {
 
       <footer className="footer container">
         <span className="brand-name serif">Persona Router</span>
-        <span>multi-voice console · {agents.length} personas loaded</span>
+        <span>群聊式多人格 · {agents.length} 名成员可拉</span>
       </footer>
     </>
   );

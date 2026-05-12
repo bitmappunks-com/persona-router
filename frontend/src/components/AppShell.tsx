@@ -16,10 +16,10 @@ export function AppShell() {
         </NavLink>
         <nav className="nav">
           <NavLink to="/" end>
-            Home
+            首页
           </NavLink>
-          <NavLink to="/personas">Directory</NavLink>
-          <NavLink to="/session">Council</NavLink>
+          <NavLink to="/personas">成员名录</NavLink>
+          <NavLink to="/session">群聊</NavLink>
         </nav>
         <div className="appbar-right">
           <span className={`status-pill ${llm?.enabled ? "live" : ""}`}>

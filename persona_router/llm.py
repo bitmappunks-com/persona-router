@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Iterator
 
 from .executor import LLMClient
 
@@ -25,16 +25,8 @@ class OpenAICompatibleClient:
     max_tokens: int = 1024
 
     def complete(self, system: str, developer: dict[str, Any], model: str, temperature: float) -> str:
-        try:
-            from openai import OpenAI
-        except ImportError as exc:
-            raise LLMConfigurationError(
-                "openai SDK is not installed. Run: pip install -e '.[llm]' "
-                "(or pip install openai)"
-            ) from exc
-
-        client = OpenAI(api_key=self.api_key, base_url=self.base_url)
-        chosen_model = model if model and model != "default" else self.default_model
+        client = _make_client(self.api_key, self.base_url)
+        chosen_model = self._pick_model(model)
         user_content = _format_developer_payload(developer)
         response = client.chat.completions.create(
             model=chosen_model,
@@ -46,6 +38,51 @@ class OpenAICompatibleClient:
             ],
         )
         return _collect_text(response)
+
+    def stream(self, system: str, developer: dict[str, Any], model: str, temperature: float) -> Iterator[str]:
+        client = _make_client(self.api_key, self.base_url)
+        chosen_model = self._pick_model(model)
+        user_content = _format_developer_payload(developer)
+        completion = client.chat.completions.create(
+            model=chosen_model,
+            temperature=temperature,
+            max_tokens=self.max_tokens,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user_content},
+            ],
+            stream=True,
+        )
+        for event in completion:
+            choices = getattr(event, "choices", None) or []
+            if not choices:
+                continue
+            delta = getattr(choices[0], "delta", None)
+            if delta is None:
+                continue
+            chunk = getattr(delta, "content", None)
+            if isinstance(chunk, str) and chunk:
+                yield chunk
+            elif isinstance(chunk, list):
+                for piece in chunk:
+                    if isinstance(piece, dict) and piece.get("type") == "text":
+                        text = str(piece.get("text", ""))
+                        if text:
+                            yield text
+
+    def _pick_model(self, model: str) -> str:
+        return model if model and model != "default" else self.default_model
+
+
+def _make_client(api_key: str, base_url: str):
+    try:
+        from openai import OpenAI
+    except ImportError as exc:
+        raise LLMConfigurationError(
+            "openai SDK is not installed. Run: pip install -e '.[llm]' "
+            "(or pip install openai)"
+        ) from exc
+    return OpenAI(api_key=api_key, base_url=base_url)
 
 
 def _format_developer_payload(developer: dict[str, Any]) -> str:

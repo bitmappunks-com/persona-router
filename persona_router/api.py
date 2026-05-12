@@ -1,17 +1,24 @@
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from .commands import parse_input
-from .executor import LLMClient, LLMConfig, run_llm_round, run_mock_round
+from .executor import (
+    LLMClient,
+    LLMConfig,
+    run_llm_round,
+    run_llm_round_stream,
+    run_mock_round,
+)
 from .llm import LLMConfigurationError, build_default_client, diagnose_llm_environment
 from .planner import build_turn_plan
 from .registry import RegistryError, default_registry_paths, load_registry
@@ -154,6 +161,52 @@ def create_app(
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         except LLMConfigurationError as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    def _stream_events(events: Iterator[dict[str, Any]]) -> Iterator[bytes]:
+        for payload in events:
+            event_name = payload.get("event", "message")
+            data = json.dumps(payload, ensure_ascii=False)
+            yield f"event: {event_name}\ndata: {data}\n\n".encode("utf-8")
+
+    def _stream_round(session_id: str, parsed_text: str | None) -> StreamingResponse:
+        try:
+            reg = registry()
+            session = session_store.load(session_id)
+            parsed = parse_input(parsed_text if parsed_text is not None else "next round")
+            mentioned = session.apply_input(parsed, reg)
+            plan = build_turn_plan(session, reg, mentioned)
+        except (RegistryError, SessionError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+        if resolved_client is None or not hasattr(resolved_client, "stream"):
+            raise HTTPException(
+                status_code=503,
+                detail="Streaming requires an LLM client with stream support. Configure DEEPSEEK_API_KEY or OPENAI_API_KEY.",
+            )
+
+        streaming_client = resolved_client
+
+        def iterator() -> Iterator[bytes]:
+            try:
+                events = run_llm_round_stream(session, reg, plan, streaming_client, resolved_config)  # type: ignore[arg-type]
+                for chunk in _stream_events(events):
+                    yield chunk
+                session_store.save(session)
+                yield from _stream_events(iter([{"event": "session", "session": session.to_dict()}]))
+            except LLMConfigurationError as exc:
+                yield from _stream_events(iter([{"event": "error", "detail": str(exc)}]))
+            except (RegistryError, SessionError, ValueError) as exc:
+                yield from _stream_events(iter([{"event": "error", "detail": str(exc)}]))
+
+        return StreamingResponse(iterator(), media_type="text/event-stream")
+
+    @app.post("/sessions/{session_id}/round/stream")
+    def run_round_stream(session_id: str, request: RoundRequest) -> StreamingResponse:
+        return _stream_round(session_id, request.text)
+
+    @app.post("/sessions/{session_id}/next/stream")
+    def next_round_stream(session_id: str) -> StreamingResponse:
+        return _stream_round(session_id, None)
 
     @app.get("/{spa_path:path}", include_in_schema=False)
     def spa_fallback(spa_path: str) -> FileResponse:

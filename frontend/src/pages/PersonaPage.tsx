@@ -15,14 +15,14 @@ export function PersonaPage() {
   if (!agent) {
     return (
       <section className="section container narrow">
-        <div className="eyebrow accent">Directory</div>
+        <div className="eyebrow accent">成员名录</div>
         <h2 className="serif" style={{ fontSize: 36, marginTop: 8 }}>
-          {ready ? "No such voice." : "Loading…"}
+          {ready ? "查无此人。" : "加载中…"}
         </h2>
         {ready ? (
           <p style={{ marginTop: 12, color: "var(--muted)" }}>
             <Link to="/personas" className="btn-link">
-              ← Back to the directory
+              ← 返回名录
             </Link>
           </p>
         ) : null}
@@ -51,7 +51,7 @@ export function PersonaPage() {
     <section className="section container">
       <div className="eyebrow accent" style={{ marginBottom: 6 }}>
         <Link to="/personas" className="btn-link" style={{ fontFamily: "var(--mono)", fontSize: 11 }}>
-          ← Directory
+          ← 名录
         </Link>
       </div>
 
@@ -74,7 +74,7 @@ export function PersonaPage() {
 
           {(agent.domains || []).length > 0 ? (
             <div className="persona-block">
-              <h3>Domains</h3>
+              <h3>擅长领域</h3>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {agent.domains.map((d) => (
                   <span key={d} className="chip accent">
@@ -87,7 +87,7 @@ export function PersonaPage() {
 
           {(agent.runtime_boundaries || []).length > 0 ? (
             <div className="persona-block">
-              <h3>Boundaries</h3>
+              <h3>行为边界</h3>
               <ul>
                 {agent.runtime_boundaries!.map((b, i) => (
                   <li key={i}>{b}</li>
@@ -98,32 +98,32 @@ export function PersonaPage() {
 
           <div className="persona-block">
             <button className="btn btn-primary" onClick={summon} disabled={opening}>
-              {opening ? "Opening session…" : `Open a session with @${agent.handle} →`}
+              {opening ? "正在拉进群…" : `拉 @${agent.handle} 进群 →`}
             </button>
           </div>
         </div>
 
         <aside className="dossier-side">
-          <h3>Dossier</h3>
+          <h3>资料档案</h3>
           <div className="dossier-grid">
             <div className="dossier-row">
-              <dt>License</dt>
+              <dt>许可证</dt>
               <dd>{license}</dd>
             </div>
             <div className="dossier-row">
-              <dt>Source</dt>
+              <dt>来源</dt>
               <dd>
                 {repo ? (
                   <a href={repo} target="_blank" rel="noreferrer">
                     {repo.replace(/^https?:\/\//, "")}
                   </a>
                 ) : (
-                  <em>not provided</em>
+                  <em>未提供</em>
                 )}
               </dd>
             </div>
             <div className="dossier-row">
-              <dt>Commit</dt>
+              <dt>提交</dt>
               <dd>
                 {commit ? (
                   <code className="mono" style={{ fontSize: 12 }}>
@@ -135,11 +135,11 @@ export function PersonaPage() {
               </dd>
             </div>
             <div className="dossier-row">
-              <dt>Imported</dt>
+              <dt>导入日期</dt>
               <dd>{importedOn || <em>—</em>}</dd>
             </div>
             <div className="dossier-row">
-              <dt>Category</dt>
+              <dt>分类</dt>
               <dd>{source.upstream_category || source.source_category || <em>—</em>}</dd>
             </div>
           </div>
