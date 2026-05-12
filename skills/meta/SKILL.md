@@ -1,9 +1,9 @@
 ---
-name: persona-author
+name: meta
 description: Author a runtime persona package for the persona-router. Use when the user wants to add a new local persona under local-personas/, distill a real person/role/topic into an evidence-backed Agent Skill, or upgrade a prompt-only draft into a research-backed package. Trigger phrases include "create a persona", "new local skill", "造一个 persona", "写一个 SKILL", "把 X 蒸馏成 skill". Not for: tweaking an existing persona's wording (do that in the file directly); editing imported-personas (those are imported, not authored here).
 ---
 
-# persona-author
+# meta
 
 A local persona package is an auditable runtime artifact, not a prompt. This skill walks you through producing one that the persona-router can load alongside `local-personas/warren-buffett-perspective/` and `imported-personas/*`.
 
@@ -57,7 +57,7 @@ Generated artifacts that must stay out of git: `corpus/raw/`, `discovery/`, `cor
 5. **Excerpts** (Step 5): pull quotable passages into `corpus/excerpts.jsonl` with `excerpt_id`, `source_id`, `raw_path`, `verbatim`.
 6. **Research** (Step 6): per-angle markdown in `research/` showing evidence chain, counterevidence, gaps. No bullet-list summaries without citations.
 7. **Distill** (Step 7): write `evidence/mental-models.jsonl`, `heuristics.jsonl`, `contradictions.md`, then `persona.json`, then `SKILL.md`.
-8. **Validate** (Step 8): run `python3 skills/persona-author/scripts/quality_check.py local-personas/<persona>/SKILL.md`, then write `tests/` and `evals.md`.
+8. **Validate** (Step 8): run `python3 skills/meta/scripts/quality_check.py local-personas/<persona>/SKILL.md`, then write `tests/` and `evals.md`.
 
 ## Reference
 

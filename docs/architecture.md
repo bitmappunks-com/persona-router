@@ -8,7 +8,7 @@ A small core. The router owns addressability, active state, turn ordering, runti
 persona-router/
 ├── imported-personas/             # imported third-party Agent Skills (read-only)
 ├── local-personas/                 # homegrown persona packages
-├── skills/persona-author/          # the SKILL that teaches how to write a local persona
+├── skills/meta/          # the SKILL that teaches how to write a local persona
 ├── persona_router/                 # everything backend
 │   ├── api.py, registry.py, ...    # FastAPI + Python package
 │   ├── schemas/                    # JSON schemas (persona-agent, persona-session, turn-plan, round-result)
@@ -153,4 +153,4 @@ user input
 
 Imported community Agent Skills are recorded in `imported-personas/SOURCES.jsonl` (upstream repo, commit, import date, license_status). Most originate from [`xixu-me/awesome-persona-distill-skills`](https://github.com/xixu-me/awesome-persona-distill-skills) under the public-figure / methodology category. Some upstream snapshots lacked a root license file; those are marked `license_missing` in `SOURCES.jsonl` and in each package's `SOURCE.md`. Verify upstream licensing before redistribution.
 
-Local persona packages under `local-personas/` are produced via the workflow described in `skills/persona-author/SKILL.md`. The full authoring spec lives at `skills/persona-author/reference/spec.md`.
+Local persona packages under `local-personas/` are produced via the workflow described in `skills/meta/SKILL.md`. The full authoring spec lives at `skills/meta/reference/spec.md`.

@@ -106,7 +106,7 @@ The web UI lets you select active agents, inspect source/license/risk metadata, 
 persona-router/
 ├── imported-personas/         # imported third-party Agent Skills
 ├── local-personas/             # locally authored persona packages
-├── skills/persona-author/      # SKILL teaching how to author a local persona
+├── skills/meta/      # SKILL teaching how to author a local persona
 ├── persona_router/             # backend: api, registry, schemas, registries,
 │                               # tests, scripts, evals, built UI bundle (web/)
 ├── frontend/                   # Vite + React source (builds into persona_router/web/)
