@@ -23,9 +23,9 @@ def main() -> int:
     parser.add_argument("--awesome-readme", help="README.md from xixu-me/awesome-persona-distill-skills")
     parser.add_argument("--clone-root", required=True, help="Directory containing upstream repos cloned by slug")
     parser.add_argument("--clone-missing", action="store_true", help="Shallow clone repos that are not present in clone-root")
-    parser.add_argument("--output-root", default="community-personas")
-    parser.add_argument("--registry-output", default="persona_router/registries/community.json")
-    parser.add_argument("--sources-output", default="community-personas/SOURCES.jsonl")
+    parser.add_argument("--output-root", default="imported-personas")
+    parser.add_argument("--registry-output", default="persona_router/registries/imported.json")
+    parser.add_argument("--sources-output", default="imported-personas/SOURCES.jsonl")
     parser.add_argument("--imported-on", required=True)
     args = parser.parse_args()
 
@@ -206,7 +206,7 @@ def build_agent(
         "domains": domains,
         "persona_ref": {
             "type": "local_agent_skill",
-            "path": f"community-personas/{slug}",
+            "path": f"imported-personas/{slug}",
             "entrypoint": "SKILL.md",
         },
         "activation": {

@@ -9,7 +9,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/buffett-perspective",
+        "path": "imported-personas/buffett-perspective",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -58,7 +58,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/changshu-anuo",
+        "path": "imported-personas/changshu-anuo",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -106,7 +106,7 @@
       "enabled": false,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/chenze-skill",
+        "path": "imported-personas/chenze-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -154,7 +154,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/elon-musk-skill",
+        "path": "imported-personas/elon-musk-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -203,7 +203,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/fengge-wangmingtianya-perspective",
+        "path": "imported-personas/fengge-wangmingtianya-perspective",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -251,7 +251,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/feynman-skill",
+        "path": "imported-personas/feynman-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -300,7 +300,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/guodegang-skills",
+        "path": "imported-personas/guodegang-skills",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -349,7 +349,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/hu-chenfeng-skill",
+        "path": "imported-personas/hu-chenfeng-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -400,7 +400,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/ilya-sutskever-skill",
+        "path": "imported-personas/ilya-sutskever-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -449,7 +449,7 @@
       "enabled": false,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/justin-bieber-skill",
+        "path": "imported-personas/justin-bieber-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -498,7 +498,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/karlmarx-skill",
+        "path": "imported-personas/karlmarx-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -547,7 +547,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/karpathy-skill",
+        "path": "imported-personas/karpathy-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -596,7 +596,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/mao-skill",
+        "path": "imported-personas/mao-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -645,7 +645,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/maoxuan-skill",
+        "path": "imported-personas/maoxuan-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -694,7 +694,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/mises-perspective",
+        "path": "imported-personas/mises-perspective",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -744,7 +744,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/mrbeast-skill",
+        "path": "imported-personas/mrbeast-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -792,7 +792,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/munger-skill",
+        "path": "imported-personas/munger-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -841,7 +841,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/naval-skill",
+        "path": "imported-personas/naval-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -889,7 +889,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/paul-graham-skill",
+        "path": "imported-personas/paul-graham-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -938,7 +938,7 @@
       "enabled": false,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/rob-pike-skill",
+        "path": "imported-personas/rob-pike-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -986,7 +986,7 @@
       "enabled": false,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/star-skill",
+        "path": "imported-personas/star-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -1035,7 +1035,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/steve-jobs-skill",
+        "path": "imported-personas/steve-jobs-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -1084,7 +1084,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/taleb-skill",
+        "path": "imported-personas/taleb-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -1132,7 +1132,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/tong-jincheng-skill",
+        "path": "imported-personas/tong-jincheng-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -1181,7 +1181,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/trump-skill",
+        "path": "imported-personas/trump-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -1230,7 +1230,7 @@
       "enabled": false,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/wang-er-skill",
+        "path": "imported-personas/wang-er-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -1278,7 +1278,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/x-mentor-skill",
+        "path": "imported-personas/x-mentor-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -1326,7 +1326,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/xinqingnian-skill",
+        "path": "imported-personas/xinqingnian-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -1375,7 +1375,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/zhang-yiming-skill",
+        "path": "imported-personas/zhang-yiming-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -1424,7 +1424,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/zhangxuefeng-skill",
+        "path": "imported-personas/zhangxuefeng-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {
@@ -1472,7 +1472,7 @@
       "enabled": true,
       "persona_ref": {
         "type": "local_agent_skill",
-        "path": "community-personas/zizek-skill",
+        "path": "imported-personas/zizek-skill",
         "entrypoint": "SKILL.md"
       },
       "activation": {

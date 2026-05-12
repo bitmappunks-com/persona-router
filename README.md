@@ -5,7 +5,7 @@ Persona Router is a stateful routing layer for persona packages and community Ag
 It separates four concerns:
 
 - **Local persona packages**: homegrown role packages under `local-personas/` (e.g. `local-personas/warren-buffett-perspective/`). New skills you author belong here.
-- **Community Agent Skills**: imported third-party skills under `community-personas/`.
+- **Community Agent Skills**: imported third-party skills under `imported-personas/`.
 - **Agent registry**: the address book that maps handles such as `@feynman` to a runtime package.
 - **Session state**: the active agents, topic, round index, and transcript for a conversation.
 
@@ -104,7 +104,7 @@ The web UI lets you select active agents, inspect source/license/risk metadata, 
 
 ```
 persona-router/
-├── community-personas/         # imported third-party Agent Skills
+├── imported-personas/         # imported third-party Agent Skills
 ├── local-personas/             # locally authored persona packages
 ├── skills/persona-author/      # SKILL teaching how to author a local persona
 ├── persona_router/             # backend: api, registry, schemas, registries,
@@ -119,7 +119,7 @@ See [`docs/architecture.md`](docs/architecture.md) for the full system explanati
 
 ```bash
 make test
-make audit-community
+make audit-imported
 make validate
 ```
 

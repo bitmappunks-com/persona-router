@@ -6,13 +6,13 @@ A small core. The router owns addressability, active state, turn ordering, runti
 
 ```
 persona-router/
-├── community-personas/             # imported third-party Agent Skills (read-only)
+├── imported-personas/             # imported third-party Agent Skills (read-only)
 ├── local-personas/                 # homegrown persona packages
 ├── skills/persona-author/          # the SKILL that teaches how to write a local persona
 ├── persona_router/                 # everything backend
 │   ├── api.py, registry.py, ...    # FastAPI + Python package
 │   ├── schemas/                    # JSON schemas (persona-agent, persona-session, turn-plan, round-result)
-│   ├── registries/                 # local.json + community.json (travel with the install)
+│   ├── registries/                 # local.json + imported.json (travel with the install)
 │   ├── evals/                      # router eval cases
 │   ├── tests/                      # pytest + fixtures
 │   ├── scripts/                    # audit / import / run-evals operational scripts
@@ -26,7 +26,7 @@ Five top-level concerns, each with one clear directory. Everything operational a
 
 ## Concepts
 
-**Persona** — a `local-personas/<name>/` or `community-personas/<name>/` package. An auditable bundle of `SKILL.md` + `persona.json` (for local) plus optional corpus/evidence/tests. Answers "how does this voice think and express itself."
+**Persona** — a `local-personas/<name>/` or `imported-personas/<name>/` package. An auditable bundle of `SKILL.md` + `persona.json` (for local) plus optional corpus/evidence/tests. Answers "how does this voice think and express itself."
 
 **Agent** — a session-addressable wrapper around a persona. Adds `agent_id`, `handle`, `display_name`, `persona_ref`, `activation` policy, `dialogue` role, and registry-level `runtime_boundaries`. One persona can be wrapped as multiple agents (e.g. `@buffett` participant vs `@buffett_critic` reviewer).
 
@@ -41,7 +41,7 @@ Loads one or more registry files, validates against `persona_router/schemas/pers
 Default registry order:
 
 1. `persona_router/registries/local.json` (bundled with the install)
-2. `persona_router/registries/community.json` (bundled with the install)
+2. `persona_router/registries/imported.json` (bundled with the install)
 3. `agents.local.json` at the repo root, if present (operator additions)
 
 ### Command parser (`persona_router.commands`)
@@ -151,6 +151,6 @@ user input
 
 ## Provenance
 
-Imported community Agent Skills are recorded in `community-personas/SOURCES.jsonl` (upstream repo, commit, import date, license_status). Most originate from [`xixu-me/awesome-persona-distill-skills`](https://github.com/xixu-me/awesome-persona-distill-skills) under the public-figure / methodology category. Some upstream snapshots lacked a root license file; those are marked `license_missing` in `SOURCES.jsonl` and in each package's `SOURCE.md`. Verify upstream licensing before redistribution.
+Imported community Agent Skills are recorded in `imported-personas/SOURCES.jsonl` (upstream repo, commit, import date, license_status). Most originate from [`xixu-me/awesome-persona-distill-skills`](https://github.com/xixu-me/awesome-persona-distill-skills) under the public-figure / methodology category. Some upstream snapshots lacked a root license file; those are marked `license_missing` in `SOURCES.jsonl` and in each package's `SOURCE.md`. Verify upstream licensing before redistribution.
 
 Local persona packages under `local-personas/` are produced via the workflow described in `skills/persona-author/SKILL.md`. The full authoring spec lives at `skills/persona-author/reference/spec.md`.

@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def load_test_registry():
     return load_registry(
-        [Path("persona_router/registries/local.json"), Path("persona_router/registries/community.json")],
+        [Path("persona_router/registries/local.json"), Path("persona_router/registries/imported.json")],
         root=ROOT,
     )
 

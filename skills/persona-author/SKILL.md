@@ -1,21 +1,21 @@
 ---
 name: persona-author
-description: Author a runtime persona package for the persona-router. Use when the user wants to add a new local persona under local-personas/, distill a real person/role/topic into an evidence-backed Agent Skill, or upgrade a prompt-only draft into a research-backed package. Trigger phrases include "create a persona", "new local skill", "造一个 persona", "写一个 SKILL", "把 X 蒸馏成 skill". Not for: tweaking an existing persona's wording (do that in the file directly); editing community-personas (those are imported, not authored here).
+description: Author a runtime persona package for the persona-router. Use when the user wants to add a new local persona under local-personas/, distill a real person/role/topic into an evidence-backed Agent Skill, or upgrade a prompt-only draft into a research-backed package. Trigger phrases include "create a persona", "new local skill", "造一个 persona", "写一个 SKILL", "把 X 蒸馏成 skill". Not for: tweaking an existing persona's wording (do that in the file directly); editing imported-personas (those are imported, not authored here).
 ---
 
 # persona-author
 
-A local persona package is an auditable runtime artifact, not a prompt. This skill walks you through producing one that the persona-router can load alongside `local-personas/warren-buffett-perspective/` and `community-personas/*`.
+A local persona package is an auditable runtime artifact, not a prompt. This skill walks you through producing one that the persona-router can load alongside `local-personas/warren-buffett-perspective/` and `imported-personas/*`.
 
 ## When to use
 
-- The user asks to add a new voice to the router that doesn't exist in `community-personas/` and isn't already in `local-personas/`.
+- The user asks to add a new voice to the router that doesn't exist in `imported-personas/` and isn't already in `local-personas/`.
 - The user wants to upgrade a sketch (just a system prompt) into a research-backed package with sources, evidence, and behavioural boundaries.
 - The user wants to audit whether an existing local persona meets the production bar.
 
 Don't trigger when:
 - The user is editing an existing persona's wording. Edit the file directly.
-- The user is importing a third-party skill. That goes through `persona_router/scripts/import_community_personas.py` into `community-personas/`, not here.
+- The user is importing a third-party skill. That goes through `persona_router/scripts/import_personas.py` into `imported-personas/`, not here.
 
 ## Output layout
 

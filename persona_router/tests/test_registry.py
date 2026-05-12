@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_load_base_and_community_registries() -> None:
     registry = load_registry(
-        [Path("persona_router/registries/local.json"), Path("persona_router/registries/community.json")],
+        [Path("persona_router/registries/local.json"), Path("persona_router/registries/imported.json")],
         root=ROOT,
     )
     assert len(registry.agents) == 32
@@ -27,7 +27,7 @@ def test_load_base_and_community_registries() -> None:
 
 def test_agent_entrypoints_exist() -> None:
     registry = load_registry(
-        [Path("persona_router/registries/local.json"), Path("persona_router/registries/community.json")],
+        [Path("persona_router/registries/local.json"), Path("persona_router/registries/imported.json")],
         root=ROOT,
     )
     for agent in registry.agents.values():
@@ -38,7 +38,7 @@ def test_agent_entrypoints_exist() -> None:
 
 def test_unknown_handle_error_includes_suggestions() -> None:
     registry = load_registry(
-        [Path("persona_router/registries/local.json"), Path("persona_router/registries/community.json")],
+        [Path("persona_router/registries/local.json"), Path("persona_router/registries/imported.json")],
         root=ROOT,
     )
     with pytest.raises(RegistryError) as excinfo:
@@ -52,7 +52,7 @@ def test_unknown_handle_error_includes_suggestions() -> None:
 
 def test_list_agents_filters() -> None:
     registry = load_registry(
-        [Path("persona_router/registries/local.json"), Path("persona_router/registries/community.json")],
+        [Path("persona_router/registries/local.json"), Path("persona_router/registries/imported.json")],
         root=ROOT,
     )
     community = registry.list_agents(source="public_figures_and_methodology_perspectives", enabled_only=False)

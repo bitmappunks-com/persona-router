@@ -13,14 +13,14 @@ MAX_FILE_BYTES = 10 * 1024 * 1024
 
 def main() -> int:
     root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(".")
-    community = root / "community-personas"
+    community = root / "imported-personas"
     sources_path = community / "SOURCES.jsonl"
     problems: list[str] = []
 
     if not community.exists():
-        problems.append("Missing community-personas directory")
+        problems.append("Missing imported-personas directory")
     if not sources_path.exists():
-        problems.append("Missing community-personas/SOURCES.jsonl")
+        problems.append("Missing imported-personas/SOURCES.jsonl")
 
     source_rows = []
     if sources_path.exists():
@@ -57,7 +57,7 @@ def main() -> int:
         for problem in problems:
             print(f"FAIL {problem}", file=sys.stderr)
         return 1
-    print(f"PASS community persona audit ({len(source_rows)} sources)")
+    print(f"PASS imported persona audit ({len(source_rows)} sources)")
     return 0
 
 

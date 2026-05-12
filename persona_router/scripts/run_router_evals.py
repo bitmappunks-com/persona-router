@@ -20,7 +20,7 @@ def main() -> int:
     root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(".")
     cases_path = root / "persona_router/evals" / "router-cases.jsonl"
     registry = load_registry(
-        [Path("persona_router/registries/local.json"), Path("persona_router/registries/community.json")],
+        [Path("persona_router/registries/local.json"), Path("persona_router/registries/imported.json")],
         root=root,
     )
     session = RouterSession.new(registry, session_id="eval_session")
