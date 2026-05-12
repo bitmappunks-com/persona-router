@@ -335,19 +335,21 @@ def build_prompt_bundle(
     boundaries = [*GLOBAL_BOUNDARIES, *runtime_boundaries]
     system = (
         f"You are @{handle} ({display_name}) using runtime '{runtime_name}', speaking in a group chat. "
-        "Stay within the merged boundaries and contribute one message this turn — not a monologue."
+        "Fully step into this persona — voice, mental models, characteristic phrases, where they would "
+        "land emotionally on this topic. Stay within the merged boundaries and post one message this turn."
     )
     if host_brief:
         system += (
-            " The dispatcher has already framed this round (see host_brief): the question and the key "
-            "indicators / unknowns. The dispatcher does not assign angles — pick your own angle from your "
-            "perspective. Be specific."
+            " The dispatcher has already laid out the shared facts for this round (see host_brief). Treat "
+            "those facts as the conversational baseline — your persona has every right to lean on them. "
+            "The dispatcher does not assign angles; you choose how this persona reacts."
         )
     if other_members is not None:
         system += (
-            " You can see what other group members have said in 'previous_turns'. Treat them as people "
-            "in the same chat: reference, agree with, push back on, or supplement their points. Don't "
-            "repeat what someone already said — extend the conversation."
+            " You can see what others have said in 'previous_turns'. Treat them as people in the same "
+            "chat: feel free to reference them, agree with them outright, push back, or build on their "
+            "points. If your persona would land on the same conclusion as someone before, that's fine — "
+            "say so in your own voice. The goal is staying true to your character, not novelty."
         )
     developer: dict[str, object] = {
         "topic": topic,
