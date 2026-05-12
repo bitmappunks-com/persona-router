@@ -22,7 +22,7 @@ def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
 def test_cli_validate_and_list_agents() -> None:
     validate = run_cli("validate")
     assert validate.returncode == 0, validate.stderr
-    assert json.loads(validate.stdout)["agents"] == 29
+    assert json.loads(validate.stdout)["agents"] == 30
 
     listing = run_cli("list-agents")
     assert listing.returncode == 0, listing.stderr

@@ -203,7 +203,7 @@
       "properties": {
         "role": {
           "type": "string",
-          "enum": ["participant", "moderator", "critic", "summarizer"]
+          "enum": ["participant", "moderator", "critic", "summarizer", "host"]
         },
         "stance": {
           "type": "string",

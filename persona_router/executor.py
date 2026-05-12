@@ -122,10 +122,14 @@ def run_llm_round(
     config = config or LLMConfig()
     boundary = assess_boundaries(plan.topic)
     turns: list[dict[str, object]] = []
+    host_brief: str | None = None
+    members_directory = _members_directory(plan, registry)
     for item in plan.items:
         agent = registry.get(item.agent_id)
         runtime = load_runtime_uncached(registry.root, agent)
         source = {**agent.source, **runtime.source}
+        is_host = item.trigger == "host"
+        others = [m for m in members_directory if m["handle"] != agent.handle]
         prompts = build_prompt_bundle(
             agent.display_name,
             agent.handle,
@@ -135,6 +139,8 @@ def run_llm_round(
             plan.topic,
             plan.allow_cross_questions,
             session.turns,
+            host_brief=None if is_host else host_brief,
+            other_members=others,
         )
         content = client.complete(
             system=str(prompts["system"]),
@@ -143,6 +149,8 @@ def run_llm_round(
             temperature=config.temperature,
         )
         content = limit_words(content, int(agent.dialogue.get("max_words_per_turn", 260)))
+        if is_host:
+            host_brief = content
         metadata = {
             "mock": False,
             "boundary": boundary.to_dict(),
@@ -153,6 +161,7 @@ def run_llm_round(
             "source": source,
             "model": config.model,
             "temperature": config.temperature,
+            "role": "host" if is_host else None,
         }
         session.append_turn(plan.round_index, item.agent_id, item.trigger, content, metadata)
         turns.append(
@@ -194,11 +203,15 @@ def run_llm_round_stream(
     boundary = assess_boundaries(plan.topic)
     yield {"event": "round_start", "round_index": plan.round_index, "topic": plan.topic}
     completed_turns: list[dict[str, Any]] = []
+    host_brief: str | None = None
+    members_directory = _members_directory(plan, registry)
 
     for item in plan.items:
         agent = registry.get(item.agent_id)
         runtime = load_runtime_uncached(registry.root, agent)
         source = {**agent.source, **runtime.source}
+        is_host = item.trigger == "host"
+        others = [m for m in members_directory if m["handle"] != agent.handle]
         prompts = build_prompt_bundle(
             agent.display_name,
             agent.handle,
@@ -208,6 +221,8 @@ def run_llm_round_stream(
             plan.topic,
             plan.allow_cross_questions,
             session.turns,
+            host_brief=None if is_host else host_brief,
+            other_members=others,
         )
         yield {
             "event": "turn_start",
@@ -215,6 +230,7 @@ def run_llm_round_stream(
             "handle": agent.handle,
             "display_name": agent.display_name,
             "trigger": item.trigger,
+            "role": "host" if is_host else "participant",
         }
         buffer: list[str] = []
         for chunk in client.stream(
@@ -229,6 +245,8 @@ def run_llm_round_stream(
             yield {"event": "token", "agent_id": item.agent_id, "delta": chunk}
         content = "".join(buffer).strip()
         content = limit_words(content, int(agent.dialogue.get("max_words_per_turn", 260)))
+        if is_host:
+            host_brief = content
         metadata = {
             "mock": False,
             "boundary": boundary.to_dict(),
@@ -240,6 +258,7 @@ def run_llm_round_stream(
             "model": config.model,
             "temperature": config.temperature,
             "streamed": True,
+            "role": "host" if is_host else None,
         }
         session.append_turn(plan.round_index, item.agent_id, item.trigger, content, metadata)
         turn_payload = {
@@ -310,20 +329,50 @@ def build_prompt_bundle(
     topic: str,
     allow_cross_questions: bool,
     previous_turns: list[dict[str, object]],
+    host_brief: str | None = None,
+    other_members: list[dict[str, str]] | None = None,
 ) -> dict[str, object]:
     boundaries = [*GLOBAL_BOUNDARIES, *runtime_boundaries]
     system = (
         f"You are @{handle} ({display_name}) using runtime '{runtime_name}'. "
         "Stay within the merged boundaries and answer only for the assigned turn."
     )
-    developer = {
+    if host_brief:
+        system += (
+            " The group dispatcher (host) has already framed this round. Read the host_brief, "
+            f"find the line addressed to @{handle} for your assigned angle, and answer from that angle."
+        )
+    developer: dict[str, object] = {
         "topic": topic,
         "boundaries": boundaries,
         "skill_excerpt": skill_excerpt,
         "allow_cross_questions": allow_cross_questions,
         "previous_turns": previous_turns[-8:],
     }
+    if host_brief:
+        developer["host_brief"] = host_brief
+    if other_members:
+        developer["other_members"] = other_members
     return {"system": system, "developer": developer}
+
+
+def _members_directory(plan: TurnPlan, registry: AgentRegistry) -> list[dict[str, str]]:
+    members: list[dict[str, str]] = []
+    for item in plan.items:
+        try:
+            agent = registry.get(item.agent_id)
+        except Exception:
+            continue
+        members.append(
+            {
+                "handle": agent.handle,
+                "display_name": agent.display_name,
+                "stance": agent.dialogue.get("stance", "") if isinstance(agent.dialogue, dict) else "",
+                "domains": " · ".join(agent.domains),
+                "role": agent.dialogue.get("role", "participant") if isinstance(agent.dialogue, dict) else "participant",
+            }
+        )
+    return members
 
 
 def limit_words(text: str, max_words: int) -> str:

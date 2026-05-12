@@ -91,9 +91,19 @@ def _format_developer_payload(developer: dict[str, Any]) -> str:
     excerpt = developer.get("skill_excerpt", "")
     allow_cross = developer.get("allow_cross_questions", True)
     previous = developer.get("previous_turns") or []
+    host_brief = developer.get("host_brief")
+    other_members = developer.get("other_members") or []
 
     parts: list[str] = []
     parts.append(f"# Topic\n{topic}")
+    if other_members:
+        formatted_members = "\n".join(
+            f"- @{m.get('handle','?')} ({m.get('display_name','')}) · {m.get('stance','')[:60]}".rstrip(" ·")
+            for m in other_members
+        )
+        parts.append(f"# Other members in the group\n{formatted_members}")
+    if host_brief:
+        parts.append(f"# host_brief（调度准备）\n{host_brief}")
     if boundaries:
         formatted = "\n".join(f"- {item}" for item in boundaries)
         parts.append(f"# Boundaries\n{formatted}")

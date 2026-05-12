@@ -501,6 +501,22 @@ function ChatBubble({
   const paragraphs = turn.content.split(/\n{2,}/).filter((p) => p.trim().length > 0);
   const name = agent?.display_name || turn.handle || turn.agent_id;
   const isEmpty = !turn.content.trim();
+  const isHost = turn.trigger === "host" || agent?.handle === "dispatcher";
+
+  if (isHost) {
+    return (
+      <DispatcherBubble
+        turn={turn}
+        agent={agent}
+        onSelect={onSelect}
+        streaming={streaming}
+        paragraphs={paragraphs}
+        name={name}
+        isEmpty={isEmpty}
+      />
+    );
+  }
+
   return (
     <div className="bubble-row agent">
       <button
@@ -532,6 +548,75 @@ function ChatBubble({
             )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function DispatcherBubble({
+  turn,
+  agent,
+  onSelect,
+  streaming,
+  paragraphs,
+  name,
+  isEmpty,
+}: {
+  turn: TurnData;
+  agent?: Agent;
+  onSelect: (agent: Agent) => void;
+  streaming: boolean;
+  paragraphs: string[];
+  name: string;
+  isEmpty: boolean;
+}) {
+  const [open, setOpen] = useState(streaming);
+  useEffect(() => {
+    if (streaming) setOpen(true);
+  }, [streaming]);
+  const wordCount = turn.content.replace(/\s+/g, "").length;
+  return (
+    <div className="bubble-row agent dispatcher">
+      <button
+        type="button"
+        className="bubble-avatar"
+        onClick={() => {
+          if (agent) onSelect(agent);
+        }}
+        aria-label={`查看 ${name} 的资料`}
+      >
+        {agent ? <Avatar agent={agent} size="sm" /> : <span className="avatar size-sm" />}
+      </button>
+      <div className="bubble-stack">
+        <button
+          type="button"
+          className={`dispatcher-toggle ${open ? "open" : ""}`}
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+        >
+          <span className="chevron" aria-hidden="true">▸</span>
+          <span className="dispatcher-label">{name} · 调度准备</span>
+          {streaming ? (
+            <span className="bubble-typing">生成中…</span>
+          ) : (
+            <span className="dispatcher-meta">{wordCount > 0 ? `${wordCount} 字 · 点击${open ? "收起" : "展开"}` : "（空）"}</span>
+          )}
+        </button>
+        {open ? (
+          <div className={`bubble bubble-dispatcher ${streaming ? "is-streaming" : ""}`}>
+            <div className="bubble-text">
+              {isEmpty && streaming ? (
+                <span className="typing-dots" aria-hidden="true">
+                  <span /><span /><span />
+                </span>
+              ) : paragraphs.length > 0 ? (
+                paragraphs.map((para, i) => <p key={i}>{para}</p>)
+              ) : (
+                <p>{turn.content}</p>
+              )}
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

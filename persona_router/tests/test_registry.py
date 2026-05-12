@@ -15,7 +15,7 @@ def test_load_base_and_community_registries() -> None:
         [Path("persona_router/registries/local.json"), Path("persona_router/registries/imported.json")],
         root=ROOT,
     )
-    assert len(registry.agents) == 29
+    assert len(registry.agents) == 30
     assert registry.resolve_handle("@buffett").agent_id == "buffett"
     assert registry.resolve_handle("feynman").agent_id == "community_feynman"
     assert registry.resolve_handle("乔布斯.skill").agent_id == "community_steve_jobs"

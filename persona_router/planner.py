@@ -42,6 +42,7 @@ def build_turn_plan(
     mentioned_agent_ids = mentioned_agent_ids or []
     active = list(session.active_agent_ids)
     ordered_ids = dedupe([*mentioned_agent_ids, *active])
+    hosts: list[TurnPlanItem] = []
     participants: list[TurnPlanItem] = []
     moderators: list[TurnPlanItem] = []
 
@@ -53,6 +54,10 @@ def build_turn_plan(
         active_now = agent_id in active
         if policy == "speak_only_when_mentioned" and not mentioned:
             continue
+        if role == "host":
+            if mentioned or active_now:
+                hosts.append(TurnPlanItem(agent_id=agent_id, trigger="host"))
+            continue
         if policy == "moderate_after_participants" or role in {"moderator", "summarizer"}:
             if mentioned or active_now:
                 moderators.append(TurnPlanItem(agent_id=agent_id, trigger="moderator"))
@@ -60,7 +65,7 @@ def build_turn_plan(
         if mentioned or active_now:
             participants.append(TurnPlanItem(agent_id=agent_id, trigger="mentioned" if mentioned else "active"))
 
-    items = [*participants, *moderators]
+    items = [*hosts, *participants, *moderators]
     if max_agents_per_round is not None:
         items = items[:max_agents_per_round]
     if not items:
