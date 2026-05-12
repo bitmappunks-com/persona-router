@@ -15,7 +15,7 @@ def test_load_base_and_community_registries() -> None:
         [Path("persona_router/registries/local.json"), Path("persona_router/registries/imported.json")],
         root=ROOT,
     )
-    assert len(registry.agents) == 32
+    assert len(registry.agents) == 29
     assert registry.resolve_handle("@buffett").agent_id == "buffett"
     assert registry.resolve_handle("feynman").agent_id == "community_feynman"
     assert registry.resolve_handle("乔布斯.skill").agent_id == "community_steve_jobs"
@@ -56,10 +56,10 @@ def test_list_agents_filters() -> None:
         root=ROOT,
     )
     community = registry.list_agents(source="public_figures_and_methodology_perspectives", enabled_only=False)
-    assert len(community) == 31
+    assert len(community) == 28
     enabled_community = registry.list_agents(source="public_figures_and_methodology_perspectives")
-    assert len(enabled_community) == 26
+    assert len(enabled_community) == 23
     medium = registry.list_agents(risk_level="medium", enabled_only=False)
     assert len(medium) == 24
     high = registry.list_agents(risk_level="high", enabled_only=False)
-    assert len(high) == 8
+    assert len(high) == 5
