@@ -9,6 +9,18 @@ from typing import Protocol
 from .session import RouterSession, load_session, save_session, session_path
 
 
+def _snippet(turn: dict | None) -> str | None:
+    if not turn:
+        return None
+    content = turn.get("content") or ""
+    if not isinstance(content, str):
+        return None
+    flat = content.replace("\n", " ").strip()
+    if len(flat) > 60:
+        return flat[:60] + "…"
+    return flat or None
+
+
 class SessionStore(Protocol):
     def load(self, session_id: str) -> RouterSession:
         """Load one session by id."""
@@ -40,6 +52,10 @@ class JsonFileSessionStore:
                 payload = json.loads(path.read_text(encoding="utf-8"))
             except (OSError, json.JSONDecodeError):
                 continue
+            updated_at = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).isoformat()
+            turns = payload.get("turns") or []
+            last_turn = turns[-1] if turns else None
+            last_active_at = (last_turn or {}).get("created_at") if isinstance(last_turn, dict) else None
             rows.append(
                 {
                     "session_id": payload.get("session_id") or path.stem,
@@ -47,13 +63,16 @@ class JsonFileSessionStore:
                     "kind": payload.get("kind", "group"),
                     "name": payload.get("name"),
                     "direct_handle": payload.get("direct_handle"),
+                    "archived": bool(payload.get("archived", False)),
                     "member_count": len(payload.get("active_agent_ids", [])),
                     "round_index": int(payload.get("round_index", 0)),
-                    "turn_count": len(payload.get("turns", [])),
-                    "updated_at": datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).isoformat(),
+                    "turn_count": len(turns),
+                    "last_active_at": last_active_at or updated_at,
+                    "last_snippet": _snippet(last_turn) if isinstance(last_turn, dict) else None,
+                    "updated_at": updated_at,
                 }
             )
-        rows.sort(key=lambda r: r["updated_at"], reverse=True)
+        rows.sort(key=lambda r: r["last_active_at"], reverse=True)
         return rows
 
 
@@ -98,6 +117,9 @@ class SQLiteSessionStore:
                     data = json.loads(payload)
                 except json.JSONDecodeError:
                     continue
+                turns = data.get("turns") or []
+                last_turn = turns[-1] if turns else None
+                last_active_at = (last_turn or {}).get("created_at") if isinstance(last_turn, dict) else None
                 rows.append(
                     {
                         "session_id": session_id,
@@ -105,9 +127,12 @@ class SQLiteSessionStore:
                         "kind": data.get("kind", "group"),
                         "name": data.get("name"),
                         "direct_handle": data.get("direct_handle"),
+                        "archived": bool(data.get("archived", False)),
                         "member_count": len(data.get("active_agent_ids", [])),
                         "round_index": int(data.get("round_index", 0)),
-                        "turn_count": len(data.get("turns", [])),
+                        "turn_count": len(turns),
+                        "last_active_at": last_active_at or updated_at,
+                        "last_snippet": _snippet(last_turn) if isinstance(last_turn, dict) else None,
                         "updated_at": updated_at,
                     }
                 )

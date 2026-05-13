@@ -30,6 +30,7 @@ class RouterSession:
     kind: str = "group"
     name: str | None = None
     direct_handle: str | None = None
+    archived: bool = False
 
     @classmethod
     def new(
@@ -75,6 +76,7 @@ class RouterSession:
             kind=data.get("kind", "group"),
             name=data.get("name"),
             direct_handle=data.get("direct_handle"),
+            archived=bool(data.get("archived", False)),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -92,6 +94,8 @@ class RouterSession:
             data["name"] = self.name
         if self.direct_handle:
             data["direct_handle"] = self.direct_handle
+        if self.archived:
+            data["archived"] = True
         if self.topic:
             data["topic"] = self.topic
         if self.last_user_input:

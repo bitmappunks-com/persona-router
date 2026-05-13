@@ -83,9 +83,12 @@ export interface SessionSummary {
   kind: "direct" | "group";
   name: string | null;
   direct_handle: string | null;
+  archived: boolean;
   member_count: number;
   round_index: number;
   turn_count: number;
+  last_active_at: string;
+  last_snippet: string | null;
   updated_at: string;
 }
 
@@ -106,7 +109,7 @@ export const api = {
     }),
   openDirect: (handle: string) =>
     request<{ session: SessionData; created: boolean }>(`/sessions/direct/${handle}`, { method: "POST" }),
-  patchSession: (sessionId: string, patch: { name?: string | null }) =>
+  patchSession: (sessionId: string, patch: { name?: string | null; archived?: boolean }) =>
     request<SessionData>(`/sessions/${sessionId}`, {
       method: "PATCH",
       body: JSON.stringify(patch),

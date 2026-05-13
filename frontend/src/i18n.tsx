@@ -20,13 +20,21 @@ const zh: Messages = {
   "nav.brand": "Persona Router",
 
   "list.search": "搜索",
-  "list.new_chat": "发起聊天",
+  "list.new_group": "发起群聊",
   "list.empty_chats": "还没有聊天",
-  "list.empty_chats_cta": "发起新聊天",
+  "list.empty_chats_cta": "发起群聊",
   "list.empty_no_match": "没有匹配的成员",
+  "list.archived_section": "已归档",
+  "list.archived_show": "查看已归档 ({count})",
+  "list.archived_hide": "收起已归档",
+  "list.no_messages": "尚无消息",
 
   "section.direct_chats": "单聊",
   "section.group_chats": "群聊",
+
+  "row.archive": "归档",
+  "row.unarchive": "取消归档",
+  "row.more": "更多",
 
   "chat.empty_title": "Persona Router",
   "chat.empty_subtitle": "从左侧选择一个聊天，或点 + 发起新聊天",
@@ -109,13 +117,21 @@ const en: Messages = {
   "nav.brand": "Persona Router",
 
   "list.search": "Search",
-  "list.new_chat": "New chat",
+  "list.new_group": "Create group chat",
   "list.empty_chats": "No chats yet",
-  "list.empty_chats_cta": "Start a new chat",
+  "list.empty_chats_cta": "Create a group chat",
   "list.empty_no_match": "No matches",
+  "list.archived_section": "Archived",
+  "list.archived_show": "Show archived ({count})",
+  "list.archived_hide": "Hide archived",
+  "list.no_messages": "No messages",
 
   "section.direct_chats": "Direct",
   "section.group_chats": "Groups",
+
+  "row.archive": "Archive",
+  "row.unarchive": "Unarchive",
+  "row.more": "More",
 
   "chat.empty_title": "Persona Router",
   "chat.empty_subtitle": "Pick a chat on the left, or tap + to start a new one",

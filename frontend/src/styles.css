@@ -389,16 +389,116 @@ ol {
   text-overflow: ellipsis;
 }
 
+.wx-section {
+  border-bottom: 1px solid var(--wx-rule);
+}
+
+.wx-section.archived {
+  opacity: 0.85;
+}
+
 .wx-section-head {
-  padding: 8px 12px 4px;
+  padding: 10px 12px 6px;
   font-size: 11px;
   color: var(--wx-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  font-weight: 500;
   background: var(--wx-list-bg);
   position: sticky;
   top: 0;
   z-index: 1;
+}
+
+.wx-archive-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--wx-muted);
+  background: transparent;
+  text-align: left;
+  border-radius: 0;
+  border-top: 1px solid var(--wx-rule);
+  transition: background 120ms ease;
+}
+
+.wx-archive-toggle:hover {
+  background: var(--wx-list-hover);
+  color: var(--wx-ink-2);
+}
+
+.wx-archive-toggle .chevron {
+  font-size: 11px;
+  color: var(--wx-muted);
+  width: 12px;
+}
+
+.wx-row-wrap {
+  position: relative;
+}
+
+.wx-row-wrap:hover .wx-row-menu-btn {
+  opacity: 1;
+}
+
+.wx-row-menu-btn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--wx-muted);
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: opacity 140ms ease, background 140ms ease;
+  z-index: 2;
+}
+
+.wx-row-menu-btn:hover {
+  background: #fff;
+  color: var(--wx-ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.wx-row-menu {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translate(0, -50%) translateY(20px);
+  background: var(--wx-surface);
+  border: 1px solid var(--wx-rule);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  padding: 4px;
+  z-index: 10;
+}
+
+.wx-row-menu button {
+  padding: 7px 10px;
+  font-size: 13px;
+  color: var(--wx-ink);
+  border-radius: 4px;
+  text-align: left;
+  transition: background 120ms ease;
+}
+
+.wx-row-menu button:hover {
+  background: var(--wx-list-hover);
+}
+
+.wx-list-row.archived {
+  opacity: 0.65;
 }
 
 .wx-chat-direct-handle {

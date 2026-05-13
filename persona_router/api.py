@@ -42,6 +42,7 @@ class CreateSessionRequest(BaseModel):
 
 class PatchSessionRequest(BaseModel):
     name: str | None = None
+    archived: bool | None = None
 
 
 def _executor_for(client: LLMClient | None, config: LLMConfig):
@@ -207,6 +208,8 @@ def create_app(
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         if request.name is not None:
             session.name = request.name.strip() or None
+        if request.archived is not None:
+            session.archived = bool(request.archived)
         session_store.save(session)
         return session.to_dict()
 
