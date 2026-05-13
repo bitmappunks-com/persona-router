@@ -34,6 +34,16 @@ class RoundRequest(BaseModel):
     text: str
 
 
+class CreateSessionRequest(BaseModel):
+    kind: str | None = None
+    name: str | None = None
+    handles: list[str] | None = None
+
+
+class PatchSessionRequest(BaseModel):
+    name: str | None = None
+
+
 def _executor_for(client: LLMClient | None, config: LLMConfig):
     if client is None:
         return None
@@ -105,15 +115,100 @@ def create_app(
         return registry().list_agents()
 
     @app.post("/sessions")
-    def create_session() -> dict[str, Any]:
+    def create_session(request: CreateSessionRequest | None = None) -> dict[str, Any]:
         reg = registry()
-        session = RouterSession.new(reg)
+        kind = (request.kind if request else None) or "group"
+        if kind not in {"group", "direct"}:
+            raise HTTPException(status_code=400, detail=f"Unknown kind: {kind}")
+        name = request.name if request else None
+        handles = request.handles if request else None
+
+        active_agent_ids: list[str] | None = None
+        direct_handle: str | None = None
+        if handles is not None:
+            try:
+                resolved = [reg.resolve_handle(handle).agent_id for handle in handles]
+            except RegistryError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
+            # always include any default-active host agent (dispatcher)
+            host_ids = [
+                aid
+                for aid, ag in reg.agents.items()
+                if ag.enabled
+                and isinstance(ag.dialogue, dict)
+                and ag.dialogue.get("role") == "host"
+                and ag.data.get("activation", {}).get("default_active", False)
+            ]
+            seen: set[str] = set()
+            active_agent_ids = []
+            for aid in [*host_ids, *resolved]:
+                if aid in seen:
+                    continue
+                seen.add(aid)
+                active_agent_ids.append(aid)
+
+        session = RouterSession.new(
+            reg,
+            kind=kind,
+            direct_handle=direct_handle,
+            name=name,
+            active_agent_ids=active_agent_ids,
+        )
         session_store.save(session)
         return {"session": session.to_dict()}
+
+    @app.post("/sessions/direct/{handle}")
+    def open_direct_session(handle: str) -> dict[str, Any]:
+        reg = registry()
+        try:
+            agent = reg.resolve_handle(handle)
+        except RegistryError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        if agent.handle == "dispatcher":
+            raise HTTPException(status_code=400, detail="Cannot open a direct chat with the dispatcher")
+        target_id = f"direct_{agent.handle}"
+        try:
+            session = session_store.load(target_id)
+            return {"session": session.to_dict(), "created": False}
+        except SessionError:
+            pass
+        # build active list: dispatcher (if default_active host) + the persona
+        host_ids = [
+            aid
+            for aid, ag in reg.agents.items()
+            if ag.enabled
+            and isinstance(ag.dialogue, dict)
+            and ag.dialogue.get("role") == "host"
+            and ag.data.get("activation", {}).get("default_active", False)
+        ]
+        active_ids = [*host_ids]
+        if agent.agent_id not in active_ids:
+            active_ids.append(agent.agent_id)
+        session = RouterSession.new(
+            reg,
+            session_id=target_id,
+            kind="direct",
+            direct_handle=agent.handle,
+            name=agent.display_name,
+            active_agent_ids=active_ids,
+        )
+        session_store.save(session)
+        return {"session": session.to_dict(), "created": True}
 
     @app.get("/sessions")
     def list_sessions() -> list[dict[str, Any]]:
         return session_store.list()
+
+    @app.patch("/sessions/{session_id}")
+    def patch_session(session_id: str, request: PatchSessionRequest) -> dict[str, Any]:
+        try:
+            session = session_store.load(session_id)
+        except SessionError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        if request.name is not None:
+            session.name = request.name.strip() or None
+        session_store.save(session)
+        return session.to_dict()
 
     @app.get("/sessions/{session_id}")
     def get_session(session_id: str) -> dict[str, Any]:

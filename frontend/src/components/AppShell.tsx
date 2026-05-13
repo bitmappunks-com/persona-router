@@ -1,14 +1,17 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { avatarUrl } from "./Avatar";
 import { useAppState } from "../state";
+import { useI18n } from "../i18n";
 
 export function AppShell() {
   const { health } = useAppState();
+  const { lang, setLang, t } = useI18n();
   const llm = health?.llm;
+  const nextLang = lang === "zh" ? "en" : "zh";
   return (
     <div className="wx-app">
-      <aside className="wx-nav" aria-label="主导航">
-        <NavLink to="/" className="wx-nav-brand" aria-label="Persona Router">
+      <aside className="wx-nav" aria-label={t("nav.brand")}>
+        <NavLink to="/" className="wx-nav-brand" aria-label={t("nav.brand")}>
           <span className="wx-nav-avatar">
             <img src={avatarUrl("persona_router")} alt="" />
           </span>
@@ -16,21 +19,28 @@ export function AppShell() {
         <NavLink
           to="/chats"
           className={({ isActive }) => `wx-nav-item ${isActive ? "active" : ""}`}
-          title="聊天"
+          title={t("nav.chats")}
         >
           <IconChats />
-          <span className="wx-nav-label">聊天</span>
         </NavLink>
         <NavLink
           to="/contacts"
           className={({ isActive }) => `wx-nav-item ${isActive ? "active" : ""}`}
-          title="通讯录"
+          title={t("nav.contacts")}
         >
           <IconContacts />
-          <span className="wx-nav-label">通讯录</span>
         </NavLink>
         <div className="wx-nav-spacer" />
-        <div className="wx-nav-status" title={llm?.enabled ? `${llm.provider} · ${llm.model}` : "mock 模式"}>
+        <button
+          type="button"
+          className="wx-nav-lang"
+          onClick={() => setLang(nextLang)}
+          title={t("lang.label")}
+          aria-label={t("lang.label")}
+        >
+          {lang === "zh" ? "中" : "EN"}
+        </button>
+        <div className="wx-nav-status" title={llm?.enabled ? `${llm.provider} · ${llm.model}` : t("status.mock")}>
           <span className={`wx-status-dot ${llm?.enabled ? "live" : "mock"}`} />
         </div>
       </aside>

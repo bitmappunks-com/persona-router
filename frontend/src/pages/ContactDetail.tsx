@@ -3,11 +3,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { api } from "../api";
 import { Avatar } from "../components/Avatar";
 import { useAppState } from "../state";
+import { useT } from "../i18n";
 
 export function ContactDetail() {
   const { handle = "" } = useParams();
   const { agents, ready } = useAppState();
   const navigate = useNavigate();
+  const t = useT();
   const [opening, setOpening] = useState(false);
 
   const agent = agents.find((a) => a.handle === handle);
@@ -16,9 +18,9 @@ export function ContactDetail() {
     return (
       <section className="wx-detail-pane">
         <div className="wx-detail-body">
-          <p className="wx-empty">{ready ? "查无此人" : "加载中…"}</p>
+          <p className="wx-empty">{ready ? t("contact.not_found") : t("loading")}</p>
           <Link to="/contacts" className="wx-text-link">
-            ← 返回通讯录
+            {t("contact.back")}
           </Link>
         </div>
       </section>
@@ -30,21 +32,22 @@ export function ContactDetail() {
   const commit = source.source_commit || source.upstream_commit || "";
   const license = source.license_status || "license_unknown";
 
-  const startSingleChat = async () => {
+  const startDirect = async () => {
     setOpening(true);
     try {
-      const { session } = await api.createSession();
-      await api.setActive(session.session_id, [agent.handle]);
+      const { session } = await api.openDirect(agent.handle);
       navigate(`/chats/${session.session_id}`);
     } catch {
       setOpening(false);
     }
   };
 
+  const riskKey = `contact.risk_${(agent.risk_level || "medium").toLowerCase()}`;
+
   return (
     <section className="wx-detail-pane">
       <header className="wx-detail-head">
-        <span className="wx-detail-title">个人资料</span>
+        <span className="wx-detail-title">{t("contact.profile")}</span>
       </header>
       <div className="wx-detail-body">
         <div className="wx-profile-card">
@@ -55,7 +58,7 @@ export function ContactDetail() {
           </div>
           <div className="wx-profile-chips">
             <span className={`wx-chip tone-${(agent.risk_level || "medium").toLowerCase()}`}>
-              {agent.risk_level || "medium"} 风险
+              {t(riskKey)}
             </span>
             {(agent.domains || []).slice(0, 3).map((d) => (
               <span key={d} className="wx-chip">
@@ -67,14 +70,14 @@ export function ContactDetail() {
 
         {agent.stance ? (
           <div className="wx-profile-section">
-            <div className="wx-profile-label">个性签名</div>
+            <div className="wx-profile-label">{t("contact.signature")}</div>
             <p className="wx-profile-stance">「{agent.stance}」</p>
           </div>
         ) : null}
 
         {(agent.runtime_boundaries || []).length > 0 ? (
           <div className="wx-profile-section">
-            <div className="wx-profile-label">行为边界</div>
+            <div className="wx-profile-label">{t("contact.boundaries")}</div>
             <ul className="wx-profile-boundaries">
               {agent.runtime_boundaries!.map((b, i) => (
                 <li key={i}>{b}</li>
@@ -84,26 +87,26 @@ export function ContactDetail() {
         ) : null}
 
         <div className="wx-profile-section">
-          <div className="wx-profile-label">资料</div>
+          <div className="wx-profile-label">{t("contact.dossier")}</div>
           <dl className="wx-profile-dossier">
             <div>
-              <dt>许可证</dt>
+              <dt>{t("contact.license")}</dt>
               <dd>{license}</dd>
             </div>
             <div>
-              <dt>来源</dt>
+              <dt>{t("contact.source")}</dt>
               <dd>
                 {repo ? (
                   <a href={repo} target="_blank" rel="noreferrer">
                     {repo.replace(/^https?:\/\//, "")}
                   </a>
                 ) : (
-                  <em>未提供</em>
+                  <em>{t("contact.not_provided")}</em>
                 )}
               </dd>
             </div>
             <div>
-              <dt>提交</dt>
+              <dt>{t("contact.commit")}</dt>
               <dd>
                 {commit ? (
                   <code className="mono">{commit.slice(0, 12)}</code>
@@ -116,8 +119,8 @@ export function ContactDetail() {
         </div>
 
         <div className="wx-profile-actions">
-          <button type="button" className="wx-btn primary" onClick={startSingleChat} disabled={opening}>
-            {opening ? "正在创建…" : "发起单聊"}
+          <button type="button" className="wx-btn primary" onClick={startDirect} disabled={opening}>
+            {opening ? t("contact.opening") : t("contact.send_message")}
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Avatar } from "./Avatar";
+import { useT } from "../i18n";
 import type { Agent } from "../types";
 
 interface Props {
@@ -23,6 +24,7 @@ export function MembersDrawer({
   selectedAgent,
   onSelectAgent,
 }: Props) {
+  const t = useT();
   const [query, setQuery] = useState("");
 
   const activeSet = useMemo(() => new Set(active), [active]);
@@ -55,24 +57,24 @@ export function MembersDrawer({
         ) : (
           <div className="wx-drawer-body">
             <header className="wx-drawer-head">
-              <h3>群成员</h3>
-              <button type="button" className="wx-drawer-close" onClick={onClose} aria-label="关闭">
+              <h3>{t("drawer.title")}</h3>
+              <button type="button" className="wx-drawer-close" onClick={onClose} aria-label={t("drawer.close")}>
                 ×
               </button>
             </header>
 
             <section className="wx-drawer-section">
               <div className="wx-drawer-section-head">
-                <span>当前在群 · {activeAgents.length}</span>
+                <span>{t("drawer.current_in_group", { count: activeAgents.length })}</span>
                 {activeAgents.length > 0 ? (
                   <button type="button" className="wx-drawer-clear" onClick={onClearAll}>
-                    清空
+                    {t("drawer.clear_all")}
                   </button>
                 ) : null}
               </div>
               <div className="wx-drawer-list">
                 {activeAgents.length === 0 ? (
-                  <p className="wx-drawer-empty">还没拉人，下面搜索后点 + 拉进群。</p>
+                  <p className="wx-drawer-empty">{t("drawer.empty_active")}</p>
                 ) : (
                   activeAgents.map((agent) => (
                     <div key={agent.agent_id} className="wx-drawer-row">
@@ -91,7 +93,7 @@ export function MembersDrawer({
                         type="button"
                         className="wx-drawer-iconbtn wx-drawer-kick"
                         onClick={() => onToggle(agent)}
-                        title="踢出群组"
+                        title={t("drawer.kick")}
                       >
                         ×
                       </button>
@@ -103,12 +105,12 @@ export function MembersDrawer({
 
             <section className="wx-drawer-section">
               <div className="wx-drawer-section-head">
-                <span>可邀请 · {filteredCandidates.length}</span>
+                <span>{t("drawer.invitable", { count: filteredCandidates.length })}</span>
               </div>
               <input
                 className="wx-drawer-search"
                 type="search"
-                placeholder="搜索 @handle / 姓名 / 领域"
+                placeholder={t("drawer.search_placeholder")}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
               />
@@ -130,14 +132,14 @@ export function MembersDrawer({
                       type="button"
                       className="wx-drawer-iconbtn wx-drawer-add"
                       onClick={() => onToggle(agent)}
-                      title="拉进群"
+                      title={t("drawer.invite")}
                     >
                       +
                     </button>
                   </div>
                 ))}
                 {filteredCandidates.length === 0 ? (
-                  <p className="wx-drawer-empty">没有匹配的成员了。</p>
+                  <p className="wx-drawer-empty">{t("drawer.empty_candidates")}</p>
                 ) : null}
               </div>
             </section>
@@ -159,17 +161,19 @@ function PersonaDetail({
   onBack: () => void;
   onToggle: () => void;
 }) {
+  const t = useT();
   const source = agent.source || {};
   const repo = source.source_repository || source.upstream_repository || "";
   const commit = source.source_commit || source.upstream_commit || "";
   const license = source.license_status || "license_unknown";
+  const riskKey = `contact.risk_${(agent.risk_level || "medium").toLowerCase()}`;
   return (
     <div className="wx-drawer-body">
       <header className="wx-drawer-head">
         <button type="button" className="wx-drawer-back" onClick={onBack}>
-          ‹ 返回
+          {t("drawer.back")}
         </button>
-        <h3>成员资料</h3>
+        <h3>{t("drawer.profile_title")}</h3>
       </header>
 
       <div className="wx-drawer-profile">
@@ -178,7 +182,7 @@ function PersonaDetail({
         <div className="wx-profile-handle">@{agent.handle}</div>
         <div className="wx-profile-chips">
           <span className={`wx-chip tone-${(agent.risk_level || "medium").toLowerCase()}`}>
-            {agent.risk_level || "medium"} 风险
+            {t(riskKey)}
           </span>
           {(agent.domains || []).slice(0, 3).map((d) => (
             <span key={d} className="wx-chip">
@@ -192,13 +196,13 @@ function PersonaDetail({
           className={`wx-btn ${isInGroup ? "" : "primary"}`}
           onClick={onToggle}
         >
-          {isInGroup ? "踢出群组" : "拉进群组"}
+          {isInGroup ? t("drawer.kick") : t("drawer.invite")}
         </button>
       </div>
 
       {(agent.runtime_boundaries || []).length > 0 ? (
         <section className="wx-drawer-section">
-          <div className="wx-profile-label">行为边界</div>
+          <div className="wx-profile-label">{t("contact.boundaries")}</div>
           <ul className="wx-profile-boundaries">
             {agent.runtime_boundaries!.map((b, i) => (
               <li key={i}>{b}</li>
@@ -208,26 +212,26 @@ function PersonaDetail({
       ) : null}
 
       <section className="wx-drawer-section">
-        <div className="wx-profile-label">资料</div>
+        <div className="wx-profile-label">{t("contact.dossier")}</div>
         <dl className="wx-profile-dossier">
           <div>
-            <dt>许可证</dt>
+            <dt>{t("contact.license")}</dt>
             <dd>{license}</dd>
           </div>
           <div>
-            <dt>来源</dt>
+            <dt>{t("contact.source")}</dt>
             <dd>
               {repo ? (
                 <a href={repo} target="_blank" rel="noreferrer">
                   {repo.replace(/^https?:\/\//, "")}
                 </a>
               ) : (
-                <em>未提供</em>
+                <em>{t("contact.not_provided")}</em>
               )}
             </dd>
           </div>
           <div>
-            <dt>提交</dt>
+            <dt>{t("contact.commit")}</dt>
             <dd>
               {commit ? (
                 <code className="mono">{commit.slice(0, 12)}</code>

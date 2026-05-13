@@ -2,10 +2,12 @@ import { useMemo, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { avatarUrl } from "../components/Avatar";
 import { useAppState } from "../state";
+import { useT } from "../i18n";
 import type { Agent } from "../types";
 
 export function ContactsTab() {
   const { agents } = useAppState();
+  const t = useT();
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -21,12 +23,12 @@ export function ContactsTab() {
 
   return (
     <>
-      <aside className="wx-list" aria-label="通讯录">
+      <aside className="wx-list" aria-label={t("nav.contacts")}>
         <header className="wx-list-head">
           <div className="wx-search">
             <input
               type="search"
-              placeholder="搜索成员"
+              placeholder={t("list.search")}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -35,7 +37,7 @@ export function ContactsTab() {
         <div className="wx-list-scroll">
           {grouped.length === 0 ? (
             <div className="wx-list-empty">
-              <p>没有匹配的成员</p>
+              <p>{t("list.empty_no_match")}</p>
             </div>
           ) : (
             grouped.map(({ letter, items }) => (

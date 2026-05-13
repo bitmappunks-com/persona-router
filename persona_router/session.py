@@ -27,20 +27,36 @@ class RouterSession:
     round_index: int = 0
     turns: list[dict[str, Any]] = field(default_factory=list)
     artifacts: list[dict[str, Any]] = field(default_factory=list)
+    kind: str = "group"
+    name: str | None = None
+    direct_handle: str | None = None
 
     @classmethod
-    def new(cls, registry: AgentRegistry, session_id: str | None = None) -> "RouterSession":
+    def new(
+        cls,
+        registry: AgentRegistry,
+        session_id: str | None = None,
+        *,
+        kind: str = "group",
+        direct_handle: str | None = None,
+        name: str | None = None,
+        active_agent_ids: list[str] | None = None,
+    ) -> "RouterSession":
         enabled = [agent.agent_id for agent in registry.agents.values() if agent.enabled]
         default_active = [
             agent.agent_id
             for agent in registry.agents.values()
             if agent.enabled and agent.data.get("activation", {}).get("default_active")
         ]
+        active = list(active_agent_ids) if active_agent_ids is not None else default_active
         return cls(
             session_id=session_id or f"sess_{uuid4().hex[:12]}",
             available_agent_ids=enabled,
-            active_agent_ids=default_active,
+            active_agent_ids=active,
             mention_activation_mode=registry.mention_activation_mode,
+            kind=kind,
+            direct_handle=direct_handle,
+            name=name,
         )
 
     @classmethod
@@ -56,6 +72,9 @@ class RouterSession:
             round_index=int(data["round_index"]),
             turns=list(data["turns"]),
             artifacts=list(data.get("artifacts", [])),
+            kind=data.get("kind", "group"),
+            name=data.get("name"),
+            direct_handle=data.get("direct_handle"),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -67,7 +86,12 @@ class RouterSession:
             "mention_activation_mode": self.mention_activation_mode,
             "round_index": self.round_index,
             "turns": self.turns,
+            "kind": self.kind,
         }
+        if self.name:
+            data["name"] = self.name
+        if self.direct_handle:
+            data["direct_handle"] = self.direct_handle
         if self.topic:
             data["topic"] = self.topic
         if self.last_user_input:

@@ -19,6 +19,9 @@ export interface SessionData {
   round_index: number;
   turns: TurnData[];
   mention_activation_mode: string;
+  kind?: "direct" | "group";
+  name?: string | null;
+  direct_handle?: string | null;
 }
 
 export interface TurnData {

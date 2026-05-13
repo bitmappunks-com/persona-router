@@ -80,18 +80,37 @@ async function* streamSSE(path: string, init: RequestInit): AsyncGenerator<Strea
 export interface SessionSummary {
   session_id: string;
   topic: string | null;
+  kind: "direct" | "group";
+  name: string | null;
+  direct_handle: string | null;
   member_count: number;
   round_index: number;
   turn_count: number;
   updated_at: string;
 }
 
+export interface CreateSessionInput {
+  kind?: "direct" | "group";
+  name?: string | null;
+  handles?: string[];
+}
+
 export const api = {
   health: () => request<HealthInfo>("/health"),
   listAgents: () => request<Agent[]>("/agents"),
   listSessions: () => request<SessionSummary[]>("/sessions"),
-  createSession: () =>
-    request<{ session: SessionData }>("/sessions", { method: "POST" }),
+  createSession: (input?: CreateSessionInput) =>
+    request<{ session: SessionData }>("/sessions", {
+      method: "POST",
+      body: JSON.stringify(input || {}),
+    }),
+  openDirect: (handle: string) =>
+    request<{ session: SessionData; created: boolean }>(`/sessions/direct/${handle}`, { method: "POST" }),
+  patchSession: (sessionId: string, patch: { name?: string | null }) =>
+    request<SessionData>(`/sessions/${sessionId}`, {
+      method: "PATCH",
+      body: JSON.stringify(patch),
+    }),
   getSession: (sessionId: string) =>
     request<SessionData>(`/sessions/${sessionId}`),
   setActive: (sessionId: string, handles: string[]) =>

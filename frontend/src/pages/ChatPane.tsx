@@ -10,6 +10,7 @@ import { api } from "../api";
 import { Avatar, avatarUrl } from "../components/Avatar";
 import { MembersDrawer } from "../components/MembersDrawer";
 import { useAppState } from "../state";
+import { useT } from "../i18n";
 import type {
   Agent,
   RoundData,
@@ -51,6 +52,7 @@ export function ChatPane() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { agents, health } = useAppState();
+  const t = useT();
 
   const [session, setSession] = useState<SessionData | null>(null);
   const [active, setActive] = useState<string[]>([]);
@@ -169,19 +171,19 @@ export function ChatPane() {
     async (kind: "round" | "next") => {
       if (!session) return;
       if (kind === "round" && visibleMembers.length === 0) {
-        setStatus({ message: "先把人拉进群再发", isError: true });
+        setStatus({ message: t("chat.add_members_first"), isError: true });
         return;
       }
       const canStream = !!health?.llm.enabled;
       setBusy(true);
-      setStatus({ message: canStream ? "生成中…" : "发送中…", isError: false });
+      setStatus({ message: canStream ? t("chat.streaming") : t("chat.sending"), isError: false });
       let userText = "";
       let messageText = "";
       try {
         if (kind === "round") {
           const trimmed = composer.trim();
           if (!trimmed) {
-            setStatus({ message: "写一句话再发吧", isError: true });
+            setStatus({ message: t("chat.write_first"), isError: true });
             setBusy(false);
             return;
           }
@@ -189,7 +191,7 @@ export function ChatPane() {
           messageText = trimmed.includes("@") ? trimmed : `${mentions} ${trimmed}`.trim();
           userText = trimmed;
         } else {
-          userText = "（继续聊一轮）";
+          userText = `(${t("chat.continue")})`;
         }
 
         if (!canStream) {
@@ -304,7 +306,7 @@ export function ChatPane() {
         setBusy(false);
       }
     },
-    [activeAgents, composer, handleError, health, session, visibleMembers.length],
+    [activeAgents, composer, handleError, health, session, t, visibleMembers.length],
   );
 
   const onSelectAgent = useCallback((agent: Agent) => {
@@ -317,20 +319,27 @@ export function ChatPane() {
       <section className="wx-chat-pane">
         <div className="wx-empty-pane">
           <div className="wx-empty-mark">⏳</div>
-          <h2>打开聊天…</h2>
+          <h2>{t("chat.opening")}</h2>
         </div>
       </section>
     );
   }
 
-  const isSingleChat = visibleMembers.length === 1;
-  const groupTitle = session?.topic
-    ? session.topic
-    : isSingleChat
+  const isDirect = session?.kind === "direct";
+  const directAgent =
+    isDirect && session?.direct_handle
+      ? agents.find((a) => a.handle === session.direct_handle)
+      : null;
+  const isSingleChat = isDirect || visibleMembers.length === 1;
+  const groupTitle = isDirect
+    ? directAgent?.display_name || session?.name || t("chat.new_chat")
+    : session?.name || session?.topic
+    ? session.name || session.topic || ""
+    : visibleMembers.length === 1
     ? visibleMembers[0].display_name
     : visibleMembers.length === 0
-    ? "新聊天"
-    : `群聊（${visibleMembers.length}人）`;
+    ? t("chat.new_chat")
+    : t("chat.group_chat_count", { count: visibleMembers.length });
 
   return (
     <section className="wx-chat-pane">
@@ -338,9 +347,11 @@ export function ChatPane() {
         <div className="wx-chat-head-main">
           <h1 className="wx-chat-title">{groupTitle}</h1>
           <div className="wx-chat-subtitle">
-            {visibleMembers.length === 0 ? (
+            {isDirect ? (
+              <span className="wx-chat-direct-handle">@{directAgent?.handle || session?.direct_handle || ""}</span>
+            ) : visibleMembers.length === 0 ? (
               <button type="button" className="wx-text-link" onClick={() => setDrawerOpen(true)}>
-                + 拉人进群
+                {t("chat.add_members")}
               </button>
             ) : (
               <button type="button" className="wx-chat-members" onClick={() => setDrawerOpen((v) => !v)}>
@@ -349,7 +360,7 @@ export function ChatPane() {
                     <img src={avatarUrl(a.handle)} alt="" />
                   </span>
                 ))}
-                <span className="wx-chat-member-count">{visibleMembers.length} 人</span>
+                <span className="wx-chat-member-count">{t("chat.members_count", { count: visibleMembers.length })}</span>
               </button>
             )}
           </div>
@@ -358,8 +369,8 @@ export function ChatPane() {
           type="button"
           className="wx-chat-action"
           onClick={() => setDrawerOpen((v) => !v)}
-          title="群信息"
-          aria-label="群信息"
+          title={t("chat.member_info")}
+          aria-label={t("chat.member_info")}
         >
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" /></svg>
         </button>
@@ -369,12 +380,12 @@ export function ChatPane() {
         {blocks.length === 0 ? (
           <div className="wx-chat-empty">
             <div className="ornament">💬</div>
-            <p>{visibleMembers.length > 0 ? "在下方发条消息开聊" : "先点 右上角 拉人进群"}</p>
+            <p>{visibleMembers.length > 0 ? t("chat.empty_messages_with_members") : t("chat.empty_messages_no_members")}</p>
           </div>
         ) : (
           blocks.map((block) => (
             <div className="wx-chat-block" key={`${block.round_index}-${block.pending ? "live" : "done"}`}>
-              <div className="wx-chat-time">{formatRoundTime(block.round_index)}</div>
+              <div className="wx-chat-time">{t("chat.round_n", { n: block.round_index })} · {nowHM()}</div>
               {block.user_text ? (
                 <div className="wx-bubble-row me">
                   <div className="wx-bubble wx-bubble-me">{block.user_text}</div>
@@ -394,10 +405,10 @@ export function ChatPane() {
                 />
               ))}
               {block.pending && block.turns.length === 0 ? (
-                <div className="wx-chat-note">…正在等待回复</div>
+                <div className="wx-chat-note">{t("chat.waiting_reply")}</div>
               ) : null}
               {block.needs_verification && !block.pending ? (
-                <div className="wx-chat-note">⚠ 涉及时效/事实问题，建议外部核实</div>
+                <div className="wx-chat-note">{t("chat.fact_warn")}</div>
               ) : null}
             </div>
           ))
@@ -413,7 +424,7 @@ export function ChatPane() {
       >
         <textarea
           rows={2}
-          placeholder={visibleMembers.length > 0 ? "输入消息" : "先拉成员进群"}
+          placeholder={visibleMembers.length > 0 ? t("chat.placeholder") : t("chat.placeholder_empty_group")}
           value={composer}
           onChange={(event) => setComposer(event.target.value)}
           disabled={visibleMembers.length === 0 || busy}
@@ -430,12 +441,12 @@ export function ChatPane() {
             className="wx-btn-text"
             disabled={rounds.length === 0 || active.length === 0 || busy}
             onClick={() => void submitMessage("next")}
-            title="不带新消息，让大家继续聊"
+            title={t("chat.continue")}
           >
-            ↻ 继续
+            ↻ {t("chat.continue")}
           </button>
           <button className="wx-btn primary small" type="submit" disabled={busy || visibleMembers.length === 0}>
-            {busy ? "…" : "发送"}
+            {busy ? "…" : t("chat.send")}
           </button>
         </div>
         {status.message ? (
@@ -538,6 +549,7 @@ function WxDispatcher({
   name: string;
   isEmpty: boolean;
 }) {
+  const t = useT();
   const [open, setOpen] = useState(streaming);
   useEffect(() => {
     if (streaming) setOpen(true);
@@ -553,8 +565,8 @@ function WxDispatcher({
       >
         <span className="chevron">▸</span>
         <span className="wx-system-label">
-          {name} · 调度准备
-          {streaming ? " · 生成中…" : wordCount > 0 ? ` · ${wordCount} 字` : ""}
+          {name} · {t("chat.system_dispatcher")}
+          {streaming ? ` · ${t("chat.streaming")}` : wordCount > 0 ? ` · ${wordCount}` : ""}
         </span>
       </button>
       {open ? (
@@ -574,9 +586,9 @@ function WxDispatcher({
   );
 }
 
-function formatRoundTime(roundIndex: number): string {
+function nowHM(): string {
   const now = new Date();
-  return `第 ${roundIndex} 轮 · ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  return `${pad(now.getHours())}:${pad(now.getMinutes())}`;
 }
 
 function pad(n: number): string {

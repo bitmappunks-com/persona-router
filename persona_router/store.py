@@ -44,6 +44,9 @@ class JsonFileSessionStore:
                 {
                     "session_id": payload.get("session_id") or path.stem,
                     "topic": payload.get("topic"),
+                    "kind": payload.get("kind", "group"),
+                    "name": payload.get("name"),
+                    "direct_handle": payload.get("direct_handle"),
                     "member_count": len(payload.get("active_agent_ids", [])),
                     "round_index": int(payload.get("round_index", 0)),
                     "turn_count": len(payload.get("turns", [])),
@@ -99,6 +102,9 @@ class SQLiteSessionStore:
                     {
                         "session_id": session_id,
                         "topic": data.get("topic"),
+                        "kind": data.get("kind", "group"),
+                        "name": data.get("name"),
+                        "direct_handle": data.get("direct_handle"),
                         "member_count": len(data.get("active_agent_ids", [])),
                         "round_index": int(data.get("round_index", 0)),
                         "turn_count": len(data.get("turns", [])),

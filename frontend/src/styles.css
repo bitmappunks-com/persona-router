@@ -175,6 +175,23 @@ ol {
   flex: 1;
 }
 
+.wx-nav-lang {
+  width: 44px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--wx-nav-muted);
+  display: grid;
+  place-items: center;
+  transition: background 140ms ease, color 140ms ease;
+  font-family: var(--mono);
+}
+
+.wx-nav-lang:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
 .wx-nav-status {
   width: 44px;
   height: 24px;
@@ -370,6 +387,24 @@ ol {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.wx-section-head {
+  padding: 8px 12px 4px;
+  font-size: 11px;
+  color: var(--wx-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--wx-list-bg);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.wx-chat-direct-handle {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--wx-muted);
 }
 
 .wx-contacts-section {
@@ -1271,6 +1306,178 @@ ol {
   background: var(--wx-surface);
   border-radius: 8px;
   text-align: center;
+}
+
+/* ─── create-group modal ────────────────────────────────── */
+
+.wx-modal-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  animation: wx-fade 160ms ease both;
+}
+
+.wx-modal {
+  width: min(560px, 92vw);
+  max-height: 84vh;
+  background: var(--wx-surface);
+  border-radius: 8px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.wx-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--wx-rule);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.wx-modal-body {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.wx-modal-picked {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 30px;
+}
+
+.wx-modal-picked-empty {
+  font-size: 12px;
+  color: var(--wx-muted);
+  align-self: center;
+}
+
+.wx-modal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--wx-list-bg);
+  border-radius: 4px;
+  padding: 3px 8px 3px 4px;
+  font-size: 12px;
+  color: var(--wx-ink-2);
+  border: 1px solid var(--wx-rule);
+}
+
+.wx-modal-chip:hover {
+  border-color: var(--wx-green);
+}
+
+.wx-modal-chip-x {
+  color: var(--wx-muted);
+  margin-left: 2px;
+}
+
+.wx-modal-name,
+.wx-modal-search {
+  background: var(--wx-list-bg);
+  border: 1px solid var(--wx-rule);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  outline: none;
+  font-family: var(--sans);
+}
+
+.wx-modal-name:focus,
+.wx-modal-search:focus {
+  border-color: var(--wx-green);
+}
+
+.wx-modal-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  border: 1px solid var(--wx-rule);
+  border-radius: 6px;
+}
+
+.wx-modal-row {
+  display: grid;
+  grid-template-columns: 24px 36px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 10px;
+  text-align: left;
+  transition: background 120ms ease;
+}
+
+.wx-modal-row:hover {
+  background: var(--wx-list-hover);
+}
+
+.wx-modal-row.picked {
+  background: rgba(7, 193, 96, 0.06);
+}
+
+.wx-modal-check {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--wx-muted-2);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  color: transparent;
+  background: var(--wx-surface);
+}
+
+.wx-modal-check.on {
+  background: var(--wx-green);
+  border-color: var(--wx-green);
+  color: #fff;
+}
+
+.wx-modal-name-block {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.wx-modal-name-line {
+  font-size: 13px;
+  color: var(--wx-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wx-modal-handle-line {
+  font-size: 11px;
+  color: var(--wx-muted);
+  font-family: var(--mono);
+}
+
+.wx-modal-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-top: 1px solid var(--wx-rule);
+  background: var(--wx-list-bg);
+}
+
+.wx-modal-count {
+  font-size: 12px;
+  color: var(--wx-muted);
 }
 
 /* ─── animations ───────────────────────────────────────── */
