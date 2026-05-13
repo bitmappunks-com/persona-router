@@ -43,8 +43,8 @@ export function MembersDrawer({
 
   return (
     <>
-      {open ? <div className="drawer-scrim" onClick={onClose} aria-hidden="true" /> : null}
-      <aside className={`drawer ${open ? "open" : ""}`} aria-label="群成员管理" aria-hidden={!open}>
+      {open ? <div className="wx-drawer-scrim" onClick={onClose} aria-hidden="true" /> : null}
+      <aside className={`wx-drawer ${open ? "open" : ""}`} aria-label="群成员管理" aria-hidden={!open}>
         {selectedAgent ? (
           <PersonaDetail
             agent={selectedAgent}
@@ -53,44 +53,43 @@ export function MembersDrawer({
             onToggle={() => onToggle(selectedAgent)}
           />
         ) : (
-          <div className="drawer-body">
-            <header className="drawer-head">
+          <div className="wx-drawer-body">
+            <header className="wx-drawer-head">
               <h3>群成员</h3>
-              <button type="button" className="drawer-close" onClick={onClose} aria-label="关闭">
+              <button type="button" className="wx-drawer-close" onClick={onClose} aria-label="关闭">
                 ×
               </button>
             </header>
 
-            <section className="drawer-section">
-              <div className="drawer-section-head">
+            <section className="wx-drawer-section">
+              <div className="wx-drawer-section-head">
                 <span>当前在群 · {activeAgents.length}</span>
                 {activeAgents.length > 0 ? (
-                  <button type="button" className="drawer-clear" onClick={onClearAll}>
+                  <button type="button" className="wx-drawer-clear" onClick={onClearAll}>
                     清空
                   </button>
                 ) : null}
               </div>
-              <div className="drawer-active-list">
+              <div className="wx-drawer-list">
                 {activeAgents.length === 0 ? (
-                  <p className="drawer-empty">还没拉人。下面搜索后点 + 拉进群。</p>
+                  <p className="wx-drawer-empty">还没拉人，下面搜索后点 + 拉进群。</p>
                 ) : (
                   activeAgents.map((agent) => (
-                    <div key={agent.agent_id} className="drawer-active-row">
+                    <div key={agent.agent_id} className="wx-drawer-row">
                       <button
                         type="button"
-                        className="drawer-active-main"
+                        className="wx-drawer-main"
                         onClick={() => onSelectAgent(agent)}
-                        title="查看资料"
                       >
                         <Avatar agent={agent} size="sm" />
                         <span>
-                          <span className="drawer-name">{agent.display_name}</span>
-                          <span className="drawer-handle">@{agent.handle}</span>
+                          <span className="wx-drawer-name">{agent.display_name}</span>
+                          <span className="wx-drawer-handle">@{agent.handle}</span>
                         </span>
                       </button>
                       <button
                         type="button"
-                        className="drawer-kick"
+                        className="wx-drawer-iconbtn wx-drawer-kick"
                         onClick={() => onToggle(agent)}
                         title="踢出群组"
                       >
@@ -102,35 +101,34 @@ export function MembersDrawer({
               </div>
             </section>
 
-            <section className="drawer-section">
-              <div className="drawer-section-head">
+            <section className="wx-drawer-section">
+              <div className="wx-drawer-section-head">
                 <span>可邀请 · {filteredCandidates.length}</span>
               </div>
               <input
-                className="drawer-search"
+                className="wx-drawer-search"
                 type="search"
                 placeholder="搜索 @handle / 姓名 / 领域"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
               />
-              <div className="drawer-candidate-list">
+              <div className="wx-drawer-list">
                 {filteredCandidates.map((agent) => (
-                  <div key={agent.agent_id} className="drawer-candidate-row">
+                  <div key={agent.agent_id} className="wx-drawer-row">
                     <button
                       type="button"
-                      className="drawer-candidate-main"
+                      className="wx-drawer-main"
                       onClick={() => onSelectAgent(agent)}
-                      title="查看资料"
                     >
                       <Avatar agent={agent} size="sm" />
                       <span>
-                        <span className="drawer-name">{agent.display_name}</span>
-                        <span className="drawer-handle">@{agent.handle}</span>
+                        <span className="wx-drawer-name">{agent.display_name}</span>
+                        <span className="wx-drawer-handle">@{agent.handle}</span>
                       </span>
                     </button>
                     <button
                       type="button"
-                      className="drawer-add"
+                      className="wx-drawer-iconbtn wx-drawer-add"
                       onClick={() => onToggle(agent)}
                       title="拉进群"
                     >
@@ -139,7 +137,7 @@ export function MembersDrawer({
                   </div>
                 ))}
                 {filteredCandidates.length === 0 ? (
-                  <p className="drawer-empty">没有匹配的成员了。</p>
+                  <p className="wx-drawer-empty">没有匹配的成员了。</p>
                 ) : null}
               </div>
             </section>
@@ -166,32 +164,32 @@ function PersonaDetail({
   const commit = source.source_commit || source.upstream_commit || "";
   const license = source.license_status || "license_unknown";
   return (
-    <div className="drawer-body">
-      <header className="drawer-head">
-        <button type="button" className="drawer-back" onClick={onBack}>
+    <div className="wx-drawer-body">
+      <header className="wx-drawer-head">
+        <button type="button" className="wx-drawer-back" onClick={onBack}>
           ‹ 返回
         </button>
         <h3>成员资料</h3>
       </header>
 
-      <div className="persona-card-stage">
+      <div className="wx-drawer-profile">
         <Avatar agent={agent} size="xl" />
-        <div className="persona-card-name">{agent.display_name}</div>
-        <div className="persona-card-handle">@{agent.handle}</div>
-        <div className="persona-card-chips">
-          <span className={`chip tone-${(agent.risk_level || "medium").toLowerCase()}`}>
+        <div className="wx-profile-name">{agent.display_name}</div>
+        <div className="wx-profile-handle">@{agent.handle}</div>
+        <div className="wx-profile-chips">
+          <span className={`wx-chip tone-${(agent.risk_level || "medium").toLowerCase()}`}>
             {agent.risk_level || "medium"} 风险
           </span>
           {(agent.domains || []).slice(0, 3).map((d) => (
-            <span key={d} className="chip">
+            <span key={d} className="wx-chip">
               {d}
             </span>
           ))}
         </div>
-        {agent.stance ? <p className="persona-card-stance-quote">「{agent.stance}」</p> : null}
+        {agent.stance ? <p className="wx-profile-stance">「{agent.stance}」</p> : null}
         <button
           type="button"
-          className={`btn ${isInGroup ? "btn-ghost" : "btn-primary"}`}
+          className={`wx-btn ${isInGroup ? "" : "primary"}`}
           onClick={onToggle}
         >
           {isInGroup ? "踢出群组" : "拉进群组"}
@@ -199,9 +197,9 @@ function PersonaDetail({
       </div>
 
       {(agent.runtime_boundaries || []).length > 0 ? (
-        <section className="drawer-section">
-          <div className="drawer-section-head">行为边界</div>
-          <ul className="persona-boundaries">
+        <section className="wx-drawer-section">
+          <div className="wx-profile-label">行为边界</div>
+          <ul className="wx-profile-boundaries">
             {agent.runtime_boundaries!.map((b, i) => (
               <li key={i}>{b}</li>
             ))}
@@ -209,9 +207,9 @@ function PersonaDetail({
         </section>
       ) : null}
 
-      <section className="drawer-section">
-        <div className="drawer-section-head">资料档案</div>
-        <dl className="drawer-dossier">
+      <section className="wx-drawer-section">
+        <div className="wx-profile-label">资料</div>
+        <dl className="wx-profile-dossier">
           <div>
             <dt>许可证</dt>
             <dd>{license}</dd>

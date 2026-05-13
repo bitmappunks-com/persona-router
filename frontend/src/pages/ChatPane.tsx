@@ -47,7 +47,7 @@ interface ChatBlock {
   pending?: boolean;
 }
 
-export function GroupPage() {
+export function ChatPane() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { agents, health } = useAppState();
@@ -70,6 +70,12 @@ export function GroupPage() {
     const set = new Set(active);
     return agents.filter((agent) => set.has(agent.agent_id));
   }, [active, agents]);
+
+  // Visible members = everyone except dispatcher (dispatcher shows inline as a system card)
+  const visibleMembers = useMemo(
+    () => activeAgents.filter((a) => a.handle !== "dispatcher"),
+    [activeAgents],
+  );
 
   const blocks = useMemo<ChatBlock[]>(() => {
     const base: ChatBlock[] = rounds.map((round, i) => ({
@@ -107,7 +113,7 @@ export function GroupPage() {
     (async () => {
       try {
         if (!id) {
-          navigate("/", { replace: true });
+          navigate("/chats", { replace: true });
           return;
         }
         const data = await api.getSession(id);
@@ -162,7 +168,7 @@ export function GroupPage() {
   const submitMessage = useCallback(
     async (kind: "round" | "next") => {
       if (!session) return;
-      if (kind === "round" && active.length === 0) {
+      if (kind === "round" && visibleMembers.length === 0) {
         setStatus({ message: "先把人拉进群再发", isError: true });
         return;
       }
@@ -298,7 +304,7 @@ export function GroupPage() {
         setBusy(false);
       }
     },
-    [active.length, activeAgents, composer, handleError, health, session],
+    [activeAgents, composer, handleError, health, session, visibleMembers.length],
   );
 
   const onSelectAgent = useCallback((agent: Agent) => {
@@ -308,142 +314,137 @@ export function GroupPage() {
 
   if (loading) {
     return (
-      <section className="landing-empty">
-        <div className="landing-pulse" />
-        <h2>打开群聊…</h2>
+      <section className="wx-chat-pane">
+        <div className="wx-empty-pane">
+          <div className="wx-empty-mark">⏳</div>
+          <h2>打开聊天…</h2>
+        </div>
       </section>
     );
   }
 
-  const groupTitle = session?.topic;
-  const memberCount = activeAgents.length;
+  const isSingleChat = visibleMembers.length === 1;
+  const groupTitle = session?.topic
+    ? session.topic
+    : isSingleChat
+    ? visibleMembers[0].display_name
+    : visibleMembers.length === 0
+    ? "新聊天"
+    : `群聊（${visibleMembers.length}人）`;
 
   return (
-    <>
-      <div className={`chat-pane ${drawerOpen ? "with-drawer" : ""}`}>
-        <header className="chat-head">
-          <div className="chat-head-main">
-            <h1 className={`chat-title ${groupTitle ? "" : "empty"}`}>
-              {groupTitle || "新群组"}
-            </h1>
-            <div className="chat-subline">
-              {memberCount > 0 ? (
-                <>
-                  <button
-                    className="chat-members-summary"
-                    type="button"
-                    onClick={() => setDrawerOpen((v) => !v)}
-                  >
-                    {activeAgents.slice(0, 6).map((agent) => (
-                      <span key={agent.agent_id} className="chat-member-dot" title={agent.display_name}>
-                        <img src={avatarUrl(agent.handle)} alt="" />
-                      </span>
-                    ))}
-                    <span className="chat-member-count">{memberCount} 人在群</span>
-                  </button>
-                </>
-              ) : (
-                <button type="button" className="chat-add-cta" onClick={() => setDrawerOpen(true)}>
-                  + 拉人进群
-                </button>
-              )}
-              {session ? (
-                <span className="chat-session-id mono">·{session.session_id.replace(/^sess_/, "").slice(0, 8)}</span>
+    <section className="wx-chat-pane">
+      <header className="wx-chat-head">
+        <div className="wx-chat-head-main">
+          <h1 className="wx-chat-title">{groupTitle}</h1>
+          <div className="wx-chat-subtitle">
+            {visibleMembers.length === 0 ? (
+              <button type="button" className="wx-text-link" onClick={() => setDrawerOpen(true)}>
+                + 拉人进群
+              </button>
+            ) : (
+              <button type="button" className="wx-chat-members" onClick={() => setDrawerOpen((v) => !v)}>
+                {visibleMembers.slice(0, 6).map((a) => (
+                  <span key={a.agent_id} className="wx-chat-member-dot" title={a.display_name}>
+                    <img src={avatarUrl(a.handle)} alt="" />
+                  </span>
+                ))}
+                <span className="wx-chat-member-count">{visibleMembers.length} 人</span>
+              </button>
+            )}
+          </div>
+        </div>
+        <button
+          type="button"
+          className="wx-chat-action"
+          onClick={() => setDrawerOpen((v) => !v)}
+          title="群信息"
+          aria-label="群信息"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" /></svg>
+        </button>
+      </header>
+
+      <div className="wx-chat-scroll" ref={transcriptRef}>
+        {blocks.length === 0 ? (
+          <div className="wx-chat-empty">
+            <div className="ornament">💬</div>
+            <p>{visibleMembers.length > 0 ? "在下方发条消息开聊" : "先点 右上角 拉人进群"}</p>
+          </div>
+        ) : (
+          blocks.map((block) => (
+            <div className="wx-chat-block" key={`${block.round_index}-${block.pending ? "live" : "done"}`}>
+              <div className="wx-chat-time">{formatRoundTime(block.round_index)}</div>
+              {block.user_text ? (
+                <div className="wx-bubble-row me">
+                  <div className="wx-bubble wx-bubble-me">{block.user_text}</div>
+                  <span className="wx-bubble-avatar">
+                    <img src={avatarUrl("user:me")} alt="" />
+                  </span>
+                </div>
+              ) : null}
+              {block.turns.map((turn) => (
+                <WxBubble
+                  key={`${turn.round_index}-${turn.agent_id}-${turn.trigger}`}
+                  turn={turn}
+                  agent={agents.find((a) => a.agent_id === turn.agent_id)}
+                  onSelect={onSelectAgent}
+                  streaming={Boolean(block.pending && turn.metadata && (turn.metadata as { streaming?: boolean }).streaming)}
+                  showName={!isSingleChat || turn.handle === "dispatcher"}
+                />
+              ))}
+              {block.pending && block.turns.length === 0 ? (
+                <div className="wx-chat-note">…正在等待回复</div>
+              ) : null}
+              {block.needs_verification && !block.pending ? (
+                <div className="wx-chat-note">⚠ 涉及时效/事实问题，建议外部核实</div>
               ) : null}
             </div>
-          </div>
+          ))
+        )}
+      </div>
+
+      <form
+        className="wx-composer"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void submitMessage("round");
+        }}
+      >
+        <textarea
+          rows={2}
+          placeholder={visibleMembers.length > 0 ? "输入消息" : "先拉成员进群"}
+          value={composer}
+          onChange={(event) => setComposer(event.target.value)}
+          disabled={visibleMembers.length === 0 || busy}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+              event.preventDefault();
+              if (!busy && visibleMembers.length > 0) void submitMessage("round");
+            }
+          }}
+        />
+        <div className="wx-composer-actions">
           <button
             type="button"
-            className="chat-drawer-toggle"
-            onClick={() => setDrawerOpen((v) => !v)}
-            aria-pressed={drawerOpen}
-            title={drawerOpen ? "收起成员栏" : "展开成员栏"}
+            className="wx-btn-text"
+            disabled={rounds.length === 0 || active.length === 0 || busy}
+            onClick={() => void submitMessage("next")}
+            title="不带新消息，让大家继续聊"
           >
-            {drawerOpen ? "›" : "‹"}
+            ↻ 继续
           </button>
-        </header>
-
-        <div className="chat-scroll" ref={transcriptRef}>
-          {blocks.length === 0 ? (
-            <div className="chat-empty">
-              <div className="ornament">💬</div>
-              <h2>{memberCount > 0 ? "发条消息试试" : "先从右边拉人进群"}</h2>
-              <p>{memberCount > 0 ? "调度员会先摆出事实，然后大家自由发言。" : "拉好人之后发消息，调度员先发言，其他人按各自角色接话。"}</p>
-            </div>
-          ) : (
-            blocks.map((block) => (
-              <div className="chat-block" key={`${block.round_index}-${block.pending ? "live" : "done"}`}>
-                {block.user_text ? (
-                  <div className="bubble-row user">
-                    <div className="bubble bubble-user">
-                      <div className="bubble-text">{block.user_text}</div>
-                    </div>
-                  </div>
-                ) : null}
-                {block.turns.map((turn) => (
-                  <ChatBubble
-                    key={`${turn.round_index}-${turn.agent_id}-${turn.trigger}`}
-                    turn={turn}
-                    agent={agents.find((a) => a.agent_id === turn.agent_id)}
-                    onSelect={onSelectAgent}
-                    streaming={Boolean(block.pending && turn.metadata && (turn.metadata as { streaming?: boolean }).streaming)}
-                  />
-                ))}
-                {block.pending && block.turns.length === 0 ? (
-                  <div className="bubble-note">…正在等待回复</div>
-                ) : null}
-                {block.needs_verification && !block.pending ? (
-                  <div className="bubble-note">⚠ 涉及时效/事实问题，建议外部核实</div>
-                ) : null}
-              </div>
-            ))
-          )}
+          <button className="wx-btn primary small" type="submit" disabled={busy || visibleMembers.length === 0}>
+            {busy ? "…" : "发送"}
+          </button>
         </div>
-
-        <form
-          className="composer"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void submitMessage("round");
-          }}
-        >
-          <div className="composer-shell">
-            <textarea
-              rows={2}
-              placeholder={memberCount > 0 ? "发消息到群里 …" : "先拉成员进群"}
-              value={composer}
-              onChange={(event) => setComposer(event.target.value)}
-              disabled={memberCount === 0 || busy}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
-                  event.preventDefault();
-                  if (!busy && memberCount > 0) void submitMessage("round");
-                }
-              }}
-            />
-            <div className="composer-actions">
-              <button
-                type="button"
-                className="btn btn-ghost"
-                disabled={rounds.length === 0 || active.length === 0 || busy}
-                onClick={() => void submitMessage("next")}
-                title="不带新消息，让大家继续聊"
-              >
-                ↻ 继续
-              </button>
-              <button className="btn btn-primary" type="submit" disabled={busy || memberCount === 0}>
-                {busy ? "…" : "发送"}
-              </button>
-            </div>
+        {status.message ? (
+          <div className={`wx-status ${status.isError ? "error" : ""} ${busy ? "busy" : ""}`}>
+            <span className="dot" />
+            <span>{status.message}</span>
           </div>
-          {status.message ? (
-            <div className={`composer-status ${status.isError ? "error" : ""} ${busy ? "busy" : ""}`}>
-              <span className="dot" />
-              <span>{status.message}</span>
-            </div>
-          ) : null}
-        </form>
-      </div>
+        ) : null}
+      </form>
 
       <MembersDrawer
         open={drawerOpen}
@@ -455,29 +456,31 @@ export function GroupPage() {
         selectedAgent={drawerAgent}
         onSelectAgent={setDrawerAgent}
       />
-    </>
+    </section>
   );
 }
 
-function ChatBubble({
+function WxBubble({
   turn,
   agent,
   onSelect,
-  streaming = false,
+  streaming,
+  showName,
 }: {
   turn: TurnData;
   agent?: Agent;
   onSelect: (agent: Agent) => void;
-  streaming?: boolean;
+  streaming: boolean;
+  showName: boolean;
 }) {
   const paragraphs = turn.content.split(/\n{2,}/).filter((p) => p.trim().length > 0);
   const name = agent?.display_name || turn.handle || turn.agent_id;
-  const isEmpty = !turn.content.trim();
   const isHost = turn.trigger === "host" || agent?.handle === "dispatcher";
+  const isEmpty = !turn.content.trim();
 
   if (isHost) {
     return (
-      <DispatcherBubble
+      <WxDispatcher
         turn={turn}
         agent={agent}
         onSelect={onSelect}
@@ -490,42 +493,35 @@ function ChatBubble({
   }
 
   return (
-    <div className="bubble-row agent">
+    <div className="wx-bubble-row other">
       <button
         type="button"
-        className="bubble-avatar"
+        className="wx-bubble-avatar"
         onClick={() => {
           if (agent) onSelect(agent);
         }}
-        aria-label={`查看 ${name} 的资料`}
       >
         {agent ? <Avatar agent={agent} size="sm" /> : <span className="avatar size-sm" />}
       </button>
-      <div className="bubble-stack">
-        <div className="bubble-byline">
-          <span className="bubble-name">{name}</span>
-          <span className="bubble-handle">@{agent?.handle || turn.handle || turn.agent_id}</span>
-          {streaming ? <span className="bubble-typing">正在输入…</span> : null}
-        </div>
-        <div className={`bubble bubble-agent ${streaming ? "is-streaming" : ""}`}>
-          <div className="bubble-text">
-            {isEmpty && streaming ? (
-              <span className="typing-dots" aria-hidden="true">
-                <span /><span /><span />
-              </span>
-            ) : paragraphs.length > 0 ? (
-              paragraphs.map((para, i) => <p key={i}>{para}</p>)
-            ) : (
-              <p>{turn.content}</p>
-            )}
-          </div>
+      <div className="wx-bubble-stack">
+        {showName ? <div className="wx-bubble-name">{name}</div> : null}
+        <div className={`wx-bubble wx-bubble-other ${streaming ? "is-streaming" : ""}`}>
+          {isEmpty && streaming ? (
+            <span className="typing-dots" aria-hidden="true">
+              <span /><span /><span />
+            </span>
+          ) : paragraphs.length > 0 ? (
+            paragraphs.map((para, i) => <p key={i}>{para}</p>)
+          ) : (
+            <p>{turn.content}</p>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function DispatcherBubble({
+function WxDispatcher({
   turn,
   agent,
   onSelect,
@@ -548,48 +544,41 @@ function DispatcherBubble({
   }, [streaming]);
   const wordCount = turn.content.replace(/\s+/g, "").length;
   return (
-    <div className="bubble-row agent dispatcher">
+    <div className="wx-system-row">
       <button
         type="button"
-        className="bubble-avatar"
-        onClick={() => {
-          if (agent) onSelect(agent);
-        }}
-        aria-label={`查看 ${name} 的资料`}
+        className={`wx-system-toggle ${open ? "open" : ""}`}
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
       >
-        {agent ? <Avatar agent={agent} size="sm" /> : <span className="avatar size-sm" />}
+        <span className="chevron">▸</span>
+        <span className="wx-system-label">
+          {name} · 调度准备
+          {streaming ? " · 生成中…" : wordCount > 0 ? ` · ${wordCount} 字` : ""}
+        </span>
       </button>
-      <div className="bubble-stack">
-        <button
-          type="button"
-          className={`dispatcher-toggle ${open ? "open" : ""}`}
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-        >
-          <span className="chevron" aria-hidden="true">▸</span>
-          <span className="dispatcher-label">{name} · 调度准备</span>
-          {streaming ? (
-            <span className="bubble-typing">生成中…</span>
+      {open ? (
+        <div className="wx-system-card" onClick={() => agent && onSelect(agent)}>
+          {isEmpty && streaming ? (
+            <span className="typing-dots" aria-hidden="true">
+              <span /><span /><span />
+            </span>
+          ) : paragraphs.length > 0 ? (
+            paragraphs.map((para, i) => <p key={i}>{para}</p>)
           ) : (
-            <span className="dispatcher-meta">{wordCount > 0 ? `${wordCount} 字 · 点击${open ? "收起" : "展开"}` : "（空）"}</span>
+            <p>{turn.content}</p>
           )}
-        </button>
-        {open ? (
-          <div className={`bubble bubble-dispatcher ${streaming ? "is-streaming" : ""}`}>
-            <div className="bubble-text">
-              {isEmpty && streaming ? (
-                <span className="typing-dots" aria-hidden="true">
-                  <span /><span /><span />
-                </span>
-              ) : paragraphs.length > 0 ? (
-                paragraphs.map((para, i) => <p key={i}>{para}</p>)
-              ) : (
-                <p>{turn.content}</p>
-              )}
-            </div>
-          </div>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
+}
+
+function formatRoundTime(roundIndex: number): string {
+  const now = new Date();
+  return `第 ${roundIndex} 轮 · ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
+
+function pad(n: number): string {
+  return n < 10 ? `0${n}` : String(n);
 }

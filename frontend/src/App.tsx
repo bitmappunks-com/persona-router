@@ -1,8 +1,11 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { AppStateProvider } from "./state";
-import { GroupPage } from "./pages/GroupPage";
-import { GroupLanding } from "./pages/GroupLanding";
+import { ChatsTab } from "./pages/ChatsTab";
+import { ChatPane } from "./pages/ChatPane";
+import { ContactsTab } from "./pages/ContactsTab";
+import { ContactDetail } from "./pages/ContactDetail";
+import { EmptyPane } from "./pages/EmptyPane";
 
 export default function App() {
   return (
@@ -10,9 +13,16 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<AppShell />}>
-            <Route path="/" element={<GroupLanding />} />
-            <Route path="/g/:id" element={<GroupPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/" element={<Navigate to="/chats" replace />} />
+            <Route path="/chats" element={<ChatsTab />}>
+              <Route index element={<EmptyPane kind="chats" />} />
+              <Route path=":id" element={<ChatPane />} />
+            </Route>
+            <Route path="/contacts" element={<ContactsTab />}>
+              <Route index element={<EmptyPane kind="contacts" />} />
+              <Route path=":handle" element={<ContactDetail />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/chats" replace />} />
           </Route>
         </Routes>
       </BrowserRouter>
